@@ -18,7 +18,7 @@ static unsigned char hasp_buffer[0xD40];
 static bool isFreePlay;
 static bool isEventMode2P;
 static bool isEventMode4P;
-const char *ipaddrdxplus;
+const char* ipaddrdxplus;
 bool isUpdate5 = false;
 
 // MUST DISABLE IC CARD, FFB MANUALLY N MT5DX+
@@ -56,7 +56,7 @@ unsigned int dxpHook_hasp_get_size(int hasp_handle, int hasp_fileid, unsigned in
 #ifdef _DEBUG
 	OutputDebugStringA("hasp_get_size\n");
 #endif
-	*hasp_size = 0xD40; // Max addressable size by the game... absmax is 4k
+	* hasp_size = 0xD40; // Max addressable size by the game... absmax is 4k
 	return HASP_STATUS_OK;
 }
 
@@ -105,7 +105,7 @@ static int writeLog(std::string filename, std::string message)
 	eventLog.open(filename, std::ios_base::app);
 
 	// File open success
-	if (eventLog.is_open()) 
+	if (eventLog.is_open())
 	{
 		// Write the message to the file
 		eventLog << message;
@@ -124,7 +124,7 @@ static int writeLog(std::string filename, std::string message)
 }
 
 // writeDump(filename: Char*, data: unsigned char *, size: size_t): Int
-static int writeDump(char * filename, unsigned char * data, size_t size)
+static int writeDump(char* filename, unsigned char* data, size_t size)
 {
 	// Open the file with the provided filename
 	FILE* file = fopen(filename, "wb");
@@ -174,7 +174,7 @@ void GenerateDongleDataDxp(bool isTerminal)
 	hasp_buffer[0x2E] = 0x40;
 	hasp_buffer[0x2F] = 0x87;
 
-	if(isTerminal)
+	if (isTerminal)
 	{
 		memcpy(hasp_buffer + 0xD00, "278311042069", 12); //272211990002
 		hasp_buffer[0xD3E] = 0x6B;
@@ -323,138 +323,14 @@ unsigned int WINAPI Hook_bind_w5p(SOCKET s, const sockaddr* addr, int namelen) {
 	}
 }
 
-// Wmmt5Func([]()): InitFunction
-// Performs the initial startup tasks for 
-// maximum tune 5, including the starting 
-// of required subprocesses.
-static InitFunction Wmmt5Func([]()
-{
-	// Alloc debug console
-	FreeConsole();
-	AllocConsole();
-	SetConsoleTitle(L"Maxitune5DX+ Console");
+static void PathFix() {
+	auto chars = { 'F', 'G' , 'J' };
 
-	FILE* pNewStdout = nullptr;
-	FILE* pNewStderr = nullptr;
-	FILE* pNewStdin = nullptr;
-
-	::freopen_s(&pNewStdout, "CONOUT$", "w", stdout);
-	::freopen_s(&pNewStderr, "CONOUT$", "w", stderr);
-	::freopen_s(&pNewStdin, "CONIN$", "r", stdin);
-	std::cout.clear();
-	std::cerr.clear();
-	std::cin.clear();
-	std::wcout.clear();
-	std::wcerr.clear();
-	std::wcin.clear();
-
-	puts("hello there, maxitune");
-
-	if (ToBool(config["Update5"]["Enable Update5"]))
-	{
-		isUpdate5 = true;
-	}
-
-	// Records if terminal mode is enabled
-	bool isTerminal = false;
-
-	// If terminal mode is set in the general settings
-	if (ToBool(config["General"]["TerminalMode"]))
-	{
-		// Terminal mode is set
-		isTerminal = true;
-	}
-	
-	// Get the network adapter ip address from the general settings
-	std::string networkip = config["General"]["NetworkAdapterIP"];
-
-	// If the ip address is not blank
-	if (!networkip.empty())
-	{
-		// Overwrite the default ip address
-		ipaddrdxplus = networkip.c_str();
-	}
-
-	hookPort = "COM3";
-	imageBasedxplus = (uintptr_t)GetModuleHandleA(0);
-
-	MH_Initialize();
-
-	// Hook dongle funcs
-	MH_CreateHookApi(L"hasp_windows_x64_106482.dll", "hasp_write", dxpHook_hasp_write, NULL);
-	MH_CreateHookApi(L"hasp_windows_x64_106482.dll", "hasp_read", dxpHook_hasp_read, NULL);
-	MH_CreateHookApi(L"hasp_windows_x64_106482.dll", "hasp_get_size", dxpHook_hasp_get_size, NULL);
-	MH_CreateHookApi(L"hasp_windows_x64_106482.dll", "hasp_decrypt", dxpHook_hasp_decrypt, NULL);
-	MH_CreateHookApi(L"hasp_windows_x64_106482.dll", "hasp_encrypt", dxpHook_hasp_encrypt, NULL);
-	MH_CreateHookApi(L"hasp_windows_x64_106482.dll", "hasp_logout", dxpHook_hasp_logout, NULL);
-	MH_CreateHookApi(L"hasp_windows_x64_106482.dll", "hasp_login", dxpHook_hasp_login, NULL);
-	MH_CreateHookApi(L"WS2_32", "bind", Hook_bind_w5p, reinterpret_cast<LPVOID*>(&pbindw5p));
-
-	MH_CreateHookApi(L"kernel32", "OutputDebugStringA", Hook_OutputDebugStringA, NULL);
-
-	// Give me the HWND please maxitune
-	MH_CreateHookApi(L"user32", "ShowWindow", Hook_ShowWindow, reinterpret_cast<LPVOID*>(&pShowWindow));
-	//pMaxituneWndProc = (WindowProcedure_t)(imageBasedxplus + 0xB78B90);
-	pMaxituneWndProc = (WindowProcedure_t)(hook::get_pattern("48 89 5C 24 08 48 89 6C 24 10 48 89 74 24 18 57 48 83 EC 30 8B EA BA EB FF FF FF 49 8B F9 49 8B F0 48 8B D9 FF 15 ? ? ? 00 48 85 C0 74 1D 4C", 0));
-
-	//load banapass emu
-	if (!isUpdate5) 
-	{
-		LoadLibraryA(".\\openBanaW5p.dll");
-	}
-	else 
-	{
-		LoadLibraryA(".\\openBanaW5p5.dll");
-	}
-
-	// Prevents game from setting time, thanks pockywitch!
-	MH_CreateHookApi(L"KERNEL32", "SetSystemTime", Hook_SetSystemTime, reinterpret_cast<LPVOID*>(&pSetSystemTime));
-
-	GenerateDongleDataDxp(isTerminal);
-
-	injector::WriteMemory<uint8_t>(hook::get_pattern("85 C9 0F 94 C0 84 C0 0F 94 C0 84 C0 75 ? 40 32 F6 EB ?", 0x15), 0, true); //patches out dongle error2 (doomer)
-	injector::MakeNOP(hook::get_pattern("83 C0 FD 83 F8 01 76 ? 49 8D ? ? ? ? 00 00"), 6);
-
-	if (ToBool(config["General"]["WhiteScreenFix"]))
-	{
-		injector::WriteMemory<DWORD>(hook::get_pattern("48 8B C4 55 57 41 54 41 55 41 56 48 8D 68 A1 48 81 EC 90 00 00 00 48 C7 45 D7 FE FF FF FF 48 89 58 08 48 89 70 18 45 33 F6 4C 89 75 DF 33 C0 48 89 45 E7", 0), 0x90C3C032, true);
-	}
-
-	{
-		auto location = hook::get_pattern<char>("41 3B C7 74 0E 48 8D 8F B8 00 00 00 BA F6 01 00 00 EB 6E 48 8D 8F A0 00 00 00");
-		
-		injector::WriteMemory<uint8_t>(location + 3, 0xEB, true); //patches content router (doomer)
-
-		// Skip some jnz
-		injector::MakeNOP(location + 0x22, 2); //patches ip addr error again (doomer)
-
-		// Skip some jnz
-		injector::MakeNOP(location + 0x33, 2); //patches ip aaddr error(doomer)
-	}
-
-	// Terminal mode is off
-	if (!isTerminal)
-	{
-		injector::MakeNOP(hook::get_pattern("74 ? 80 7B 31 00 75 ? 48 8B 43 10 80 78 31 00 75 1A 48 8B D8 48 8B 00 80 78 31 00 75 ? 48 8B D8"), 2); //terminal on same machine patch
-
-	}
-	else
-	{	//terminal mode patches
-		safeJMP(hook::get_pattern("0F B6 41 05 2C 30 3C 09 77 04 0F BE C0 C3 83 C8 FF C3"), ReturnTrue);
-		safeJMP(hook::get_pattern("8B 01 0F B6 40 78 C3 CC CC CC CC"), ReturnTrue);
-	}
-	
-
-	auto chars = { 'F', 'G' };
-
-	for (auto cha : chars)
-	{
+	for (auto cha : chars) {
 		auto patterns = hook::pattern(va("%02X 3A 2F", cha));
 
-		if (patterns.size() > 0)
-		{
-			for (int i = 0; i < patterns.size(); i++)
-			{
+		if (patterns.size() > 0) {
+			for (int i = 0; i < patterns.size(); i++) {
 				char* text = patterns.get(i).get<char>(0);
 				std::string text_str(text);
 
@@ -467,26 +343,130 @@ static InitFunction Wmmt5Func([]()
 			}
 		}
 	}
+}
 
-	if (!isUpdate5) 
+// Wmmt5Func([]()): InitFunction
+// Performs the initial startup tasks for 
+// maximum tune 5, including the starting 
+// of required subprocesses.
+static InitFunction Wmmt5Func([]()
 	{
-		// Enable all print
-		injector::MakeNOP(imageBasedxplus + 0x898BD3, 6);
+		// Alloc debug console
+		FreeConsole();
+		AllocConsole();
 
-		//Fix crash when saving story mode and Time attack
-		injector::MakeNOP(imageBasedxplus + 0xE90C7, 5);
-	}
-	else
-	{
+		SetConsoleTitle(L"WMMT5DX Console");
+
+		FILE* pNewStdout = nullptr;
+		FILE* pNewStderr = nullptr;
+		FILE* pNewStdin = nullptr;
+
+		::freopen_s(&pNewStdout, "CONOUT$", "w", stdout);
+		::freopen_s(&pNewStderr, "CONOUT$", "w", stderr);
+		::freopen_s(&pNewStdin, "CONIN$", "r", stdin);
+		std::cout.clear();
+		std::cerr.clear();
+		std::cin.clear();
+		std::wcout.clear();
+		std::wcerr.clear();
+		std::wcin.clear();
+
+		isUpdate5 = true;
+
+		system("del /f /s /q .\\Fcontents\\*.* && del /f /q .\\*.db && del /f /q .\\hints.dat && del /f /q .\\*.bin && del /f /q .\\*.bin.gz");
+
+		// Records if terminal mode is enabled
+		bool isTerminal = false;
+
+		// If terminal mode is set in the general settings
+		if (ToBool(config["General"]["TerminalMode"]))
+		{
+			// Terminal mode is set
+			isTerminal = true;
+		}
+
+		// Get the network adapter ip address from the general settings
+		std::string networkip = config["General"]["NetworkAdapterIP"];
+
+		// If the ip address is not blank
+		if (!networkip.empty())
+		{
+			// Overwrite the default ip address
+			ipaddrdxplus = networkip.c_str();
+		}
+
+		hookPort = "COM3";
+		imageBasedxplus = (uintptr_t)GetModuleHandleA(0);
+
+		MH_Initialize();
+
+		// Hook dongle funcs
+		MH_CreateHookApi(L"hasp_windows_x64_106482.dll", "hasp_write", dxpHook_hasp_write, NULL);
+		MH_CreateHookApi(L"hasp_windows_x64_106482.dll", "hasp_read", dxpHook_hasp_read, NULL);
+		MH_CreateHookApi(L"hasp_windows_x64_106482.dll", "hasp_get_size", dxpHook_hasp_get_size, NULL);
+		MH_CreateHookApi(L"hasp_windows_x64_106482.dll", "hasp_decrypt", dxpHook_hasp_decrypt, NULL);
+		MH_CreateHookApi(L"hasp_windows_x64_106482.dll", "hasp_encrypt", dxpHook_hasp_encrypt, NULL);
+		MH_CreateHookApi(L"hasp_windows_x64_106482.dll", "hasp_logout", dxpHook_hasp_logout, NULL);
+		MH_CreateHookApi(L"hasp_windows_x64_106482.dll", "hasp_login", dxpHook_hasp_login, NULL);
+		MH_CreateHookApi(L"WS2_32", "bind", Hook_bind_w5p, reinterpret_cast<LPVOID*>(&pbindw5p));
+		MH_CreateHookApi(L"kernel32", "OutputDebugStringA", Hook_OutputDebugStringA, NULL);
+
+		// Give me the HWND please maxitune
+		MH_CreateHookApi(L"user32", "ShowWindow", Hook_ShowWindow, reinterpret_cast<LPVOID*>(&pShowWindow));
+		//pMaxituneWndProc = (WindowProcedure_t)(imageBasedxplus + 0xB78B90);
+		pMaxituneWndProc = (WindowProcedure_t)(hook::get_pattern("48 89 5C 24 08 48 89 6C 24 10 48 89 74 24 18 57 48 83 EC 30 8B EA BA EB FF FF FF 49 8B F9 49 8B F0 48 8B D9 FF 15 ? ? ? 00 48 85 C0 74 1D 4C", 0));
+
+		//load banapass emu
+		LoadLibraryA(".\\openBanaW5p5.dll");
+
+		// Prevents game from setting time, thanks pockywitch!
+		MH_CreateHookApi(L"KERNEL32", "SetSystemTime", Hook_SetSystemTime, reinterpret_cast<LPVOID*>(&pSetSystemTime));
+
+		GenerateDongleDataDxp(isTerminal);
+
+		injector::WriteMemory<uint8_t>(hook::get_pattern("85 C9 0F 94 C0 84 C0 0F 94 C0 84 C0 75 ? 40 32 F6 EB ?", 0x15), 0, true); //patches out dongle error2 (doomer)
+
+		injector::MakeNOP(hook::get_pattern("83 C0 FD 83 F8 01 76 ? 49 8D ? ? ? ? 00 00"), 6);
+
+		if (ToBool(config["General"]["WhiteScreenFix"]))
+		{
+			injector::WriteMemory<DWORD>(hook::get_pattern("48 8B C4 55 57 41 54 41 55 41 56 48 8D 68 A1 48 81 EC 90 00 00 00 48 C7 45 D7 FE FF FF FF 48 89 58 08 48 89 70 18 45 33 F6 4C 89 75 DF 33 C0 48 89 45 E7", 0), 0x90C3C032, true);
+		}
+
+		{
+			auto location = hook::get_pattern<char>("41 3B C7 74 0E 48 8D 8F B8 00 00 00 BA F6 01 00 00 EB 6E 48 8D 8F A0 00 00 00");
+
+			injector::WriteMemory<uint8_t>(location + 3, 0xEB, true); //patches content router (doomer)
+
+			// Skip some jnz
+			injector::MakeNOP(location + 0x22, 2); //patches ip addr error again (doomer)
+
+			// Skip some jnz
+			injector::MakeNOP(location + 0x33, 2); //patches ip aaddr error(doomer)
+		}
+
+		// Terminal mode is off
+		if (!isTerminal)
+		{
+			injector::MakeNOP(hook::get_pattern("74 ? 80 7B 31 00 75 ? 48 8B 43 10 80 78 31 00 75 1A 48 8B D8 48 8B 00 80 78 31 00 75 ? 48 8B D8"), 2); //terminal on same machine patch
+
+		}
+		else
+		{	//terminal mode patches
+			safeJMP(hook::get_pattern("0F B6 41 05 2C 30 3C 09 77 04 0F BE C0 C3 83 C8 FF C3"), ReturnTrue);
+			safeJMP(hook::get_pattern("8B 01 0F B6 40 78 C3 CC CC CC CC"), ReturnTrue);
+		}
+
+		PathFix();
+
 		// Enable all print
 		injector::MakeNOP(imageBasedxplus + 0x8F15A3, 6);
 
 		//Fix crash when saving story mode and Time attack
 		injector::MakeNOP(imageBasedxplus + 0xE8DE7, 5);
-	}
 
-	MH_EnableHook(MH_ALL_HOOKS);
+		MH_EnableHook(MH_ALL_HOOKS);
 
-}, GameID::WMMT5DXPlus);
+	}, GameID::WMMT5DXPlus);
 #endif
 #pragma optimize("", on)

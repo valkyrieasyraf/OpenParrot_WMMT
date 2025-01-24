@@ -472,6 +472,10 @@ void GameDetect::DetectCurrentGame()
 				{
 					SetGameId(GameID::WMMT6R, "WMMT6R");
 				}
+				else if (newCrcResult == 0x37842885)
+				{
+					SetGameId(GameID::WMMT6RR, "WMMT6RR");
+				}
 				else 
 				{
 					SetGameId(GameID::WMMT5, "WMMT5 Update 10-21");
@@ -480,6 +484,7 @@ void GameDetect::DetectCurrentGame()
 			}
 			
 		}
+
 #endif
 		switch (newCrcResult)
 		{
@@ -822,6 +827,10 @@ void GameDetect::DetectCurrentGame()
 		case 0xd1707347: // Base
 		case 0xc20612d0: // Patched Base
 			SetGameId(GameID::UmifreshTest, "Umihara KawaseFresh! For AC Test Menu");
+			break;
+		case 0x7e804704: // WMMT6R and earlier versions
+		case 0x87c240d4: // WMMT6RR
+			SetGameId(GameID::AMAuthd, "AMAuthd for WMMT");
 			break;
 #endif
 		default:
