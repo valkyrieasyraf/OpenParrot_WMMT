@@ -174,9 +174,9 @@ extern "C" {
 	RenderText originalRenderText = NULL;
 
 	void* whereRenderShape;
-	void implOfRenderShape() {}
+	void implOfRenderShape();
 	void* whereRenderText;
-	void implOfRenderText() {}
+	void implOfRenderText();
 
 	float realRenderShape(const char* lmdPath) {
 		if (strstr(lmdPath, "RIVALMARK")) return 1.0;
@@ -224,8 +224,6 @@ static BOOL Hook_ShowWindow(HWND hwnd, int nCmdShow) {
 	mt6Hwnd = hwnd;
 	return pShowWindow(hwnd, nCmdShow);
 }
-
-
 
 // array size is 1107
 static const unsigned char terminal_cert_v388[] = {
@@ -531,11 +529,11 @@ static InitFunction Wmmt6RRFunc([]() {
 	MH_CreateHook((void*)whereRenderShape, (void*)implOfRenderShape, (void**)&originalRenderShape);
 	MH_CreateHook((void*)whereRenderText, (void*)implOfRenderText, (void**)&originalRenderText);
 
-	injector::MakeNOP((imageBase + 0xEA228), 4);
-	injector::MakeNOP((imageBase + 0xEA24E), 4);
-	injector::MakeNOP((imageBase + 0x78E117), 9);
-	injector::MakeNOP((imageBase + 0x78E13B), 5);
-	injector::WriteMemory<float>((imageBase + 0x130368C), (float)(yRes - 12.000), true);
+	injector::MakeNOP((imageBase + 0xB34A8), 4);
+	injector::MakeNOP((imageBase + 0xB34CE), 4);
+	injector::MakeNOP((imageBase + 0x78CC14), 9);
+	injector::MakeNOP((imageBase + 0x78CC39), 5);
+	injector::WriteMemory<float>((imageBase + 0x14CD22C), (float)(yRes - 12.000), true);
 
 	// Hook dongle funcs
 	MH_CreateHookApi(L"hasp_windows_x64_30382.dll", "hasp_write", Hook_hasp_write, NULL);

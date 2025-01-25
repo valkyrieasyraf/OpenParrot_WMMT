@@ -12,8 +12,7 @@ u_short HttpPort = 80;
 
 // PrepareAMAuth
 static const unsigned char AMConfigW6W[] = R"(
-[AMUpdaterConfig] 
-;; AMUpdater Configuration
+[AMUpdaterConfig]
 amucfg-title=WANGAN MIDNIGHT MAXIMUM TUNE 6RR
 amucfg-lang=EN
 amucfg-countdown=5
@@ -100,9 +99,8 @@ dtmode-io_passphrase=Qx8hJ1KilweAp5Xm
 )";
 
 static const unsigned char AMConfigW5P[] = R"(
-[AMUpdaterConfig] 
-;; AMUpdater 一般設定
-amucfg-title=湾岸ミッドナイトMAXIMUM TUNE 5DX PLUS
+[AMUpdaterConfig]
+amucfg-title=WANGAN MIDNIGHT MAXIMUM TUNE 5DX PLUS
 amucfg-lang=JP
 amucfg-countdown=5
 amucfg-h_resol=1360
@@ -110,8 +108,7 @@ amucfg-v_resol=768
 amucfg-logfile=.\amupdater.log
 amucfg-game_rev=3
 
-[AMAuthdConfig] 
-;; AMAuthd 一般設定
+[AMAuthdConfig]
 amdcfg-authType=ALL.NET
 amdcfg-sleepTime=50
 amdcfg-resoNameTimeout=180
@@ -121,30 +118,25 @@ amdcfg-logfile=
 amdcfg-export_log=
 amdcfg-offlineMode=DISABLE
 
-[AllnetConfig] 
-;; ALL.Net 一般設定
+[AllnetConfig]
 allcfg-gameID=SBWJ
 allcfg-gameVer=7.00
 
 [AllnetOptionRevalTime]
-;; ALL.Net 再認証時刻設定
 allopt-reval_hour=7
 allopt-reval_minute=0
 allopt-reval_second=0
 
 [AllnetOptionTimeout]
-;; ALL.Net 通信タイムアウト設定
 allopt-timeout_connect=60000  
 allopt-timeout_send=60000
 allopt-timeout_recv=60000
 
 [MuchaAppConfig]
-;; mucha_app 設定
 appcfg-logfile=.\muchaapp.log
 appcfg-loglevel=INFO
 
 [MuchaSysConfig]
-;; MUCHA システム設定
 syscfg-daemon_exe=.\MuchaBin\muchacd.exe
 syscfg-daemon_pidfile=.\MuchaBin\muchacd.pid
 syscfg-daemon_logfile=.\MuchaBin\muchacd.log
@@ -153,7 +145,6 @@ syscfg-daemon_listen=tcp:0.0.0.0:12345
 syscfg-client_connect=tcp:127.0.0.1:12345
 
 [MuchaCAConfig]
-;; MUCHA 認証設定
 cacfg-game_cd=W5P1
 cacfg-game_ver=00.05
 cacfg-game_board_type=0
@@ -166,7 +157,6 @@ cacfg-interval_ainfo_renew=10
 cacfg-interval_ainfo_retry=10
 
 [MuchaDtConfig]
-;; MUCHA ファイル配信 (DT) 設定
 dtcfg-dl_product_id=0x57355031
 dtcfg-dl_chunk_size=0x10000
 dtcfg-dl_image_path=.\dl_image
@@ -189,7 +179,6 @@ dtcfg-dl_lan_send_timeout=
 dtcfg-dl_lan_recv_timeout=
 
 [MuchaDtModeConfig]
-;; MUCHA ファイル配信モード設定
 dtmode-io_dir=E:\
 dtmode-io_file=W5P10JPN
 dtmode-io_conv=DECEXP
@@ -199,7 +188,7 @@ dtmode-io_passphrase=Qx8hJ1KilweAp5Xm
 static const unsigned char AMConfigW5X[] = R"(
 [AMUpdaterConfig] 
 ;; AMUpdater Configuration
-amucfg-title=湾岸ミッドナイトマキシマムチューン5DX
+amucfg-title=WANGAN MIDNIGHT MAXIMUM TUNE 5DX
 amucfg-lang=EN
 amucfg-countdown=5
 amucfg-h_resol=1360
