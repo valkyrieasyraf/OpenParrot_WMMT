@@ -553,9 +553,9 @@ static void PrepareAMAuth() {
 	GameVer actualGameVer = W5P;
 	if ((GameVersion.compare("WM510JPN06") == 0)) actualGameVer = WM5;
 	else if ((GameVersion.compare("W5X10JPN02") == 0)) actualGameVer = W5X;
-	else if ((GameVersion.compare("W5P10JPN05") == 0) || (GameVersion.compare("W5X10JPN05") == 0)) actualGameVer = W5P;
+	else if ((GameVersion.compare("W5P10JPN05") == 0) || (GameVersion.compare("W5X10JPN05") == 0) || (GameVersion.compare("W5X10JPN12") == 0)) actualGameVer = W5P;
 	else if ((GameVersion.compare("WM610JPN04") == 0)) actualGameVer = WM6;
-	else if ((GameVersion.compare("W6R10JPN00") == 0)) actualGameVer = W6R;
+	else if ((GameVersion.compare("W6R10JPN08") == 0)) actualGameVer = W6R;
 	else if ((GameVersion.compare("W6W10JPN05") == 0)) actualGameVer = W6W;
 	printf("GameVer is %d", actualGameVer);
 
@@ -582,6 +582,11 @@ static void PrepareAMAuth() {
 			fclose(AMConfigWrite);
 			break;
 		}
+		else if ((GameVersion.compare("W5X10JPN12") == 0)) {
+			fwrite(AMConfigW5X_P, 1, sizeof(AMConfigW5X_P), AMConfigWrite);
+			fclose(AMConfigWrite);
+			break;
+		}
 	// Wangan Midnight Maximum Tune 6R
 	case W6R:
 		fwrite(AMConfigW6R, 1, sizeof(AMConfigW6R), AMConfigWrite);
@@ -599,6 +604,11 @@ static void PrepareAMAuth() {
 			break;
 		}
 		else if ((GameVersion.compare("W5X10JPN05") == 0)) {
+			fwrite(AMConfigW5X_P, 1, sizeof(AMConfigW5X_P), AMConfigWrite);
+			fclose(AMConfigWrite);
+			break;
+		}
+		else if ((GameVersion.compare("W5X10JPN12") == 0)) {
 			fwrite(AMConfigW5X_P, 1, sizeof(AMConfigW5X_P), AMConfigWrite);
 			fclose(AMConfigWrite);
 			break;
