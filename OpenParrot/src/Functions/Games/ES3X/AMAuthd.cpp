@@ -11,15 +11,190 @@
 u_short HttpPort = 80;
 
 // PrepareAMAuth
-static const unsigned char AMConfigW6W[] = R"(
+static const unsigned char AMConfigWM5[] = R"(
 [AMUpdaterConfig]
-amucfg-title=WANGAN MIDNIGHT MAXIMUM TUNE 6RR
+amucfg-title=WANGAN MIDNIGHT MAXIMUM TUNE 5
+amucfg-lang=JP
+amucfg-countdown=5
+amucfg-h_resol=1360
+amucfg-v_resol=768
+amucfg-logfile=.\amupdater.log
+amucfg-game_rev=1
+
+[AMAuthdConfig]
+amdcfg-authType=ALL.NET
+amdcfg-sleepTime=50
+amdcfg-resoNameTimeout=180
+amdcfg-writableConfig=.\WritableConfig.ini
+amdcfg-showConsole=ENABLE
+amdcfg-logfile=
+amdcfg-export_log=
+amdcfg-offlineMode=DISABLE
+
+[AllnetConfig]
+allcfg-gameID=SBWJ
+allcfg-gameVer=5.00
+
+[AllnetOptionRevalTime]
+allopt-reval_hour=7
+allopt-reval_minute=0
+allopt-reval_second=0
+
+[AllnetOptionTimeout]
+allopt-timeout_connect=60000  
+allopt-timeout_send=60000
+allopt-timeout_recv=60000
+
+[MuchaAppConfig]
+appcfg-logfile=.\muchaapp.log
+appcfg-loglevel=INFO
+
+[MuchaSysConfig]
+syscfg-daemon_exe=.\MuchaBin\muchacd.exe
+syscfg-daemon_pidfile=.\MuchaBin\muchacd.pid
+syscfg-daemon_logfile=.\MuchaBin\muchacd.log
+syscfg-daemon_loglevel=INFO
+syscfg-daemon_listen=tcp:0.0.0.0:12345
+syscfg-client_connect=tcp:127.0.0.1:12345
+
+[MuchaCAConfig]
+cacfg-game_cd=WM51
+cacfg-game_ver=00.06
+cacfg-game_board_type=0
+cacfg-game_board_id=WM5
+cacfg-auth_server_url=https://0.0.0.0:10082/
+cacfg-auth_server_sslverify=0
+cacfg-auth_server_sslcafile=.\front.mucha-prd.nbgi-amnet.jp.cacert.pem
+cacfg-auth_server_timeout=600
+cacfg-interval_ainfo_renew=10
+cacfg-interval_ainfo_retry=10
+
+[MuchaDtConfig]
+dtcfg-dl_product_id=0x57355031
+dtcfg-dl_chunk_size=0x10000
+dtcfg-dl_image_path=.\dl_image
+dtcfg-dl_image_size=0
+dtcfg-dl_image_type=RAW
+dtcfg-dl_image_crypt_key=0x45520913
+dtcfg-dl_log_level=INFO
+dtcfg-dl_lan_crypt_key=0xfz26s7201m68952x
+dtcfg-dl_lan_broadcast_interval=1000
+dtcfg-dl_lan_udp_port=8765
+dtcfg-dl_lan_bandwidth_limit=0
+dtcfg-dl_lan_broadcast_address=0.0.0.0
+dtcfg-dl_wan_retry_limit=
+dtcfg-dl_wan_retry_interval=
+dtcfg-dl_wan_send_timeout=
+dtcfg-dl_wan_recv_timeout=
+dtcfg-dl_lan_retry_limit=
+dtcfg-dl_lan_retry_interval=
+dtcfg-dl_lan_send_timeout=
+dtcfg-dl_lan_recv_timeout=
+
+[MuchaDtModeConfig]
+dtmode-io_dir=E:\
+dtmode-io_file=WM510JPN
+dtmode-io_conv=DECEXP
+dtmode-io_passphrase=Qx8hJ1KilweAp5Xm
+)";
+
+static const unsigned char AMConfigW5X[] = R"(
+[AMUpdaterConfig]
+amucfg-title=WANGAN MIDNIGHT MAXIMUM TUNE 5DX
+amucfg-lang=JP
+amucfg-countdown=5
+amucfg-h_resol=1360
+amucfg-v_resol=768
+amucfg-logfile=.\amupdater.log
+amucfg-game_rev=2
+
+[AMAuthdConfig]
+amdcfg-authType=ALL.NET
+amdcfg-sleepTime=50
+amdcfg-resoNameTimeout=180
+amdcfg-writableConfig=.\WritableConfig.ini
+amdcfg-showConsole=ENABLE
+amdcfg-logfile=
+amdcfg-export_log=
+amdcfg-offlineMode=DISABLE
+
+[AllnetConfig]
+allcfg-gameID=SBWJ
+allcfg-gameVer=5.00
+
+[AllnetOptionRevalTime]
+allopt-reval_hour=7
+allopt-reval_minute=0
+allopt-reval_second=0
+
+[AllnetOptionTimeout]
+allopt-timeout_connect=60000  
+allopt-timeout_send=60000
+allopt-timeout_recv=60000
+
+[MuchaAppConfig]
+appcfg-logfile=.\muchaapp.log
+appcfg-loglevel=INFO
+
+[MuchaSysConfig]
+syscfg-daemon_exe=.\MuchaBin\muchacd.exe
+syscfg-daemon_pidfile=.\MuchaBin\muchacd.pid
+syscfg-daemon_logfile=.\MuchaBin\muchacd.log
+syscfg-daemon_loglevel=INFO
+syscfg-daemon_listen=tcp:0.0.0.0:12345
+syscfg-client_connect=tcp:127.0.0.1:12345
+
+[MuchaCAConfig]
+cacfg-game_cd=W5X2
+cacfg-game_ver=00.02
+cacfg-game_board_type=0
+cacfg-game_board_id=W5X
+cacfg-auth_server_url=https://0.0.0.0:10082/
+cacfg-auth_server_sslverify=0
+cacfg-auth_server_sslcafile=.\front.mucha-prd.nbgi-amnet.jp.cacert.pem
+cacfg-auth_server_timeout=600
+cacfg-interval_ainfo_renew=10
+cacfg-interval_ainfo_retry=10
+
+[MuchaDtConfig]
+dtcfg-dl_product_id=0x57355831
+dtcfg-dl_chunk_size=0x10000
+dtcfg-dl_image_path=.\dl_image
+dtcfg-dl_image_size=0
+dtcfg-dl_image_type=RAW
+dtcfg-dl_image_crypt_key=0x45520913
+dtcfg-dl_log_level=INFO
+dtcfg-dl_lan_crypt_key=0xfz26s7201m68952x
+dtcfg-dl_lan_broadcast_interval=1000
+dtcfg-dl_lan_udp_port=8765
+dtcfg-dl_lan_bandwidth_limit=0
+dtcfg-dl_lan_broadcast_address=0.0.0.0
+dtcfg-dl_wan_retry_limit=
+dtcfg-dl_wan_retry_interval=
+dtcfg-dl_wan_send_timeout=
+dtcfg-dl_wan_recv_timeout=
+dtcfg-dl_lan_retry_limit=
+dtcfg-dl_lan_retry_interval=
+dtcfg-dl_lan_send_timeout=
+dtcfg-dl_lan_recv_timeout=
+
+[MuchaDtModeConfig]
+dtmode-io_dir=E:\
+dtmode-io_file=W5X10JPN
+dtmode-io_conv=DECEXP
+dtmode-io_passphrase=Qx8hJ1KilweAp5Xm
+)";
+
+static const unsigned char AMConfigW5X_P[] = R"(
+[AMUpdaterConfig] 
+;; AMUpdater Configuration
+amucfg-title=WANGAN MIDNIGHT MAXIMUM TUNE 5DX
 amucfg-lang=EN
 amucfg-countdown=5
 amucfg-h_resol=1360
 amucfg-v_resol=768
 amucfg-logfile=.\amupdater.log
-amucfg-game_rev=3
+amucfg-game_rev=2
 
 [AMAuthdConfig] 
 amdcfg-authType=ALL.NET
@@ -58,10 +233,10 @@ syscfg-daemon_listen=tcp:0.0.0.0:12345
 syscfg-client_connect=tcp:127.0.0.1:12345
 
 [MuchaCAConfig]
-cacfg-game_cd=W6W1
-cacfg-game_ver=05.03
+cacfg-game_cd=W5X2
+cacfg-game_ver=00.02
 cacfg-game_board_type=0
-cacfg-game_board_id=W6W
+cacfg-game_board_id=WM5
 cacfg-auth_server_url=https://0.0.0.0:10082/
 cacfg-auth_server_sslverify=0
 cacfg-auth_server_sslcafile=.\front.mucha-prd.nbgi-amnet.jp.cacert.pem
@@ -93,7 +268,7 @@ dtcfg-dl_lan_recv_timeout=
 
 [MuchaDtModeConfig]
 dtmode-io_dir=E:\
-dtmode-io_file=W6W10JPN
+dtmode-io_file=W5X10JPN
 dtmode-io_conv=DECEXP
 dtmode-io_passphrase=Qx8hJ1KilweAp5Xm
 )";
@@ -181,94 +356,6 @@ dtcfg-dl_lan_recv_timeout=
 [MuchaDtModeConfig]
 dtmode-io_dir=E:\
 dtmode-io_file=W5P10JPN
-dtmode-io_conv=DECEXP
-dtmode-io_passphrase=Qx8hJ1KilweAp5Xm
-)";
-
-static const unsigned char AMConfigW5X[] = R"(
-[AMUpdaterConfig] 
-;; AMUpdater Configuration
-amucfg-title=WANGAN MIDNIGHT MAXIMUM TUNE 5DX
-amucfg-lang=EN
-amucfg-countdown=5
-amucfg-h_resol=1360
-amucfg-v_resol=768
-amucfg-logfile=.\amupdater.log
-amucfg-game_rev=2
-
-[AMAuthdConfig] 
-amdcfg-authType=ALL.NET
-amdcfg-sleepTime=50
-amdcfg-resoNameTimeout=180
-amdcfg-writableConfig=.\WritableConfig.ini
-amdcfg-showConsole=ENABLE
-amdcfg-logfile=
-amdcfg-export_log=
-amdcfg-offlineMode=DISABLE
-
-[AllnetConfig] 
-allcfg-gameID=SBWJ
-allcfg-gameVer=5.00
-
-[AllnetOptionRevalTime]
-allopt-reval_hour=7
-allopt-reval_minute=0
-allopt-reval_second=0
-
-[AllnetOptionTimeout]
-allopt-timeout_connect=60000  
-allopt-timeout_send=60000
-allopt-timeout_recv=60000
-
-[MuchaAppConfig]
-appcfg-logfile=.\muchaapp.log
-appcfg-loglevel=INFO
-
-[MuchaSysConfig]
-syscfg-daemon_exe=.\MuchaBin\muchacd.exe
-syscfg-daemon_pidfile=.\muchacd.pid
-syscfg-daemon_logfile=.\muchacd.log
-syscfg-daemon_loglevel=INFO
-syscfg-daemon_listen=tcp:0.0.0.0:12345
-syscfg-client_connect=tcp:127.0.0.1:12345
-
-[MuchaCAConfig]
-cacfg-game_cd=W5X2
-cacfg-game_ver=00.02
-cacfg-game_board_type=0
-cacfg-game_board_id=WM5
-cacfg-auth_server_url=https://0.0.0.0:10082/
-cacfg-auth_server_sslverify=0
-cacfg-auth_server_sslcafile=.\front.mucha-prd.nbgi-amnet.jp.cacert.pem
-cacfg-auth_server_timeout=300
-cacfg-interval_ainfo_renew=1800
-cacfg-interval_ainfo_retry=60
-
-[MuchaDtConfig]
-dtcfg-dl_product_id=0x57355031
-dtcfg-dl_chunk_size=0x10000
-dtcfg-dl_image_path=.\dl_image
-dtcfg-dl_image_size=0
-dtcfg-dl_image_type=RAW
-dtcfg-dl_image_crypt_key=0x45520913
-dtcfg-dl_log_level=INFO
-dtcfg-dl_lan_crypt_key=0xfz26s7201m68952x
-dtcfg-dl_lan_broadcast_interval=1000
-dtcfg-dl_lan_udp_port=8765
-dtcfg-dl_lan_bandwidth_limit=0
-dtcfg-dl_lan_broadcast_address=0.0.0.0
-dtcfg-dl_wan_retry_limit=
-dtcfg-dl_wan_retry_interval=
-dtcfg-dl_wan_send_timeout=
-dtcfg-dl_wan_recv_timeout=
-dtcfg-dl_lan_retry_limit=
-dtcfg-dl_lan_retry_interval=
-dtcfg-dl_lan_send_timeout=
-dtcfg-dl_lan_recv_timeout=
-
-[MuchaDtModeConfig]
-dtmode-io_dir=E:\
-dtmode-io_file=W5X10JPN
 dtmode-io_conv=DECEXP
 dtmode-io_passphrase=Qx8hJ1KilweAp5Xm
 )";
@@ -361,6 +448,92 @@ dtmode-io_conv=DECEXP
 dtmode-io_passphrase=Qx8hJ1KilweAp5Xm
 )";
 
+static const unsigned char AMConfigW6W[] = R"(
+[AMUpdaterConfig]
+amucfg-title=WANGAN MIDNIGHT MAXIMUM TUNE 6RR
+amucfg-lang=EN
+amucfg-countdown=5
+amucfg-h_resol=1360
+amucfg-v_resol=768
+amucfg-logfile=.\amupdater.log
+amucfg-game_rev=3
+
+[AMAuthdConfig] 
+amdcfg-authType=ALL.NET
+amdcfg-sleepTime=50
+amdcfg-resoNameTimeout=180
+amdcfg-writableConfig=.\WritableConfig.ini
+amdcfg-showConsole=ENABLE
+amdcfg-logfile=
+amdcfg-export_log=
+amdcfg-offlineMode=DISABLE
+
+[AllnetConfig] 
+allcfg-gameID=SBWJ
+allcfg-gameVer=5.00
+
+[AllnetOptionRevalTime]
+allopt-reval_hour=7
+allopt-reval_minute=0
+allopt-reval_second=0
+
+[AllnetOptionTimeout]
+allopt-timeout_connect=60000  
+allopt-timeout_send=60000
+allopt-timeout_recv=60000
+
+[MuchaAppConfig]
+appcfg-logfile=.\muchaapp.log
+appcfg-loglevel=INFO
+
+[MuchaSysConfig]
+syscfg-daemon_exe=.\MuchaBin\muchacd.exe
+syscfg-daemon_pidfile=.\muchacd.pid
+syscfg-daemon_logfile=.\muchacd.log
+syscfg-daemon_loglevel=INFO
+syscfg-daemon_listen=tcp:0.0.0.0:12345
+syscfg-client_connect=tcp:127.0.0.1:12345
+
+[MuchaCAConfig]
+cacfg-game_cd=W6W1
+cacfg-game_ver=05.03
+cacfg-game_board_type=0
+cacfg-game_board_id=W6W
+cacfg-auth_server_url=https://0.0.0.0:10082/
+cacfg-auth_server_sslverify=0
+cacfg-auth_server_sslcafile=.\front.mucha-prd.nbgi-amnet.jp.cacert.pem
+cacfg-auth_server_timeout=300
+cacfg-interval_ainfo_renew=1800
+cacfg-interval_ainfo_retry=60
+
+[MuchaDtConfig]
+dtcfg-dl_product_id=0x57355031
+dtcfg-dl_chunk_size=0x10000
+dtcfg-dl_image_path=.\dl_image
+dtcfg-dl_image_size=0
+dtcfg-dl_image_type=RAW
+dtcfg-dl_image_crypt_key=0x45520913
+dtcfg-dl_log_level=INFO
+dtcfg-dl_lan_crypt_key=0xfz26s7201m68952x
+dtcfg-dl_lan_broadcast_interval=1000
+dtcfg-dl_lan_udp_port=8765
+dtcfg-dl_lan_bandwidth_limit=0
+dtcfg-dl_lan_broadcast_address=0.0.0.0
+dtcfg-dl_wan_retry_limit=
+dtcfg-dl_wan_retry_interval=
+dtcfg-dl_wan_send_timeout=
+dtcfg-dl_wan_recv_timeout=
+dtcfg-dl_lan_retry_limit=
+dtcfg-dl_lan_retry_interval=
+dtcfg-dl_lan_send_timeout=
+dtcfg-dl_lan_recv_timeout=
+
+[MuchaDtModeConfig]
+dtmode-io_dir=E:\
+dtmode-io_file=W6W10JPN
+dtmode-io_conv=DECEXP
+dtmode-io_passphrase=Qx8hJ1KilweAp5Xm
+)";
 
 static void PrepareAMAuth() {
 
@@ -369,33 +542,52 @@ static void PrepareAMAuth() {
 	std::string GameVersion = config["Authentication"]["GameVersion"];
 
 	enum GameVer {
-		W5P = 0,
-		W6R = 1,
-		W6W = 2
+		WM5 = 0,
+		W5X = 1,
+		W5P = 2,
+		WM6 = 3,
+		W6R = 4,
+		W6W = 5
 	};
 
 	GameVer actualGameVer = W5P;
-	if ((GameVersion.compare("W5P10JPN05") == 0) || (GameVersion.compare("W5X10JPN02") == 0)) actualGameVer = W5P;
+	if ((GameVersion.compare("WM510JPN06") == 0)) actualGameVer = WM5;
+	else if ((GameVersion.compare("W5X10JPN02") == 0)) actualGameVer = W5X;
+	else if ((GameVersion.compare("W5P10JPN05") == 0) || (GameVersion.compare("W5X10JPN05") == 0)) actualGameVer = W5P;
+	else if ((GameVersion.compare("WM610JPN04") == 0)) actualGameVer = WM6;
 	else if ((GameVersion.compare("W6R10JPN00") == 0)) actualGameVer = W6R;
 	else if ((GameVersion.compare("W6W10JPN05") == 0)) actualGameVer = W6W;
 	printf("GameVer is %d", actualGameVer);
 
 	switch (actualGameVer) {
+	// Wangan Midnight Maximum Tune 5
+	case WM5:
+		fwrite(AMConfigWM5, 1, sizeof(AMConfigWM5), AMConfigWrite);
+		fclose(AMConfigWrite);
+		break;
+	// Wangan Midnight Maximum Tune 5DX
+	case W5X:
+		fwrite(AMConfigW5X, 1, sizeof(AMConfigW5X), AMConfigWrite);
+		fclose(AMConfigWrite);
+		break;
+	// Wangan Midnight Maximum Tune 5DX+
 	case W5P:
 		if ((GameVersion.compare("W5P10JPN05") == 0)) {
 			fwrite(AMConfigW5P, 1, sizeof(AMConfigW5P), AMConfigWrite);
 			fclose(AMConfigWrite);
 			break;
 		}
-		else if ((GameVersion.compare("W5X10JPN02") == 0)) {
-			fwrite(AMConfigW5X, 1, sizeof(AMConfigW5X), AMConfigWrite);
+		else if ((GameVersion.compare("W5X10JPN05") == 0)) {
+			fwrite(AMConfigW5X_P, 1, sizeof(AMConfigW5X_P), AMConfigWrite);
 			fclose(AMConfigWrite);
 			break;
 		}
+	// Wangan Midnight Maximum Tune 6R
 	case W6R:
 		fwrite(AMConfigW6R, 1, sizeof(AMConfigW6R), AMConfigWrite);
 		fclose(AMConfigWrite);
 		break;
+	// Wangan Midnight Maximum Tune 6RR
 	case W6W:
 		fwrite(AMConfigW6W, 1, sizeof(AMConfigW6W), AMConfigWrite);
 		fclose(AMConfigWrite);
@@ -406,8 +598,8 @@ static void PrepareAMAuth() {
 			fclose(AMConfigWrite);
 			break;
 		}
-		else if ((GameVersion.compare("W5X10JPN02") == 0)) {
-			fwrite(AMConfigW5X, 1, sizeof(AMConfigW5X), AMConfigWrite);
+		else if ((GameVersion.compare("W5X10JPN05") == 0)) {
+			fwrite(AMConfigW5X_P, 1, sizeof(AMConfigW5X_P), AMConfigWrite);
 			fclose(AMConfigWrite);
 			break;
 		}

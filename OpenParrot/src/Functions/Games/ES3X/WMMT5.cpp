@@ -267,9 +267,9 @@ static void Hook_OutputDebugStringA(LPCSTR str)
 }
 
 typedef int (WINAPI* BIND)(SOCKET, CONST SOCKADDR*, INT);
-BIND pbind = NULL;
+static BIND pbind = NULL;
 
-unsigned int WINAPI Hook_bind(SOCKET s, const sockaddr* addr, int namelen) {
+static unsigned int WINAPI Hook_bind(SOCKET s, const sockaddr* addr, int namelen) {
 	sockaddr_in bindAddr = { 0 };
 	bindAddr.sin_family = AF_INET;
 	bindAddr.sin_addr.s_addr = inet_addr("192.168.96.20");
@@ -302,6 +302,28 @@ DWORD WINAPI Wmmt5FfbCollector(void* ctx)
 		*ffbOffset3 = *(DWORD*)(imageBase + 0x196F190);
 		*ffbOffset4 = *(DWORD*)(imageBase + 0x196F194);
 		Sleep(10);
+	}
+}
+
+static void PathFix() {
+	auto chars = { 'F', 'G' , 'J' };
+
+	for (auto cha : chars) {
+		auto patterns = hook::pattern(va("%02X 3A 2F", cha));
+
+		if (patterns.size() > 0) {
+			for (int i = 0; i < patterns.size(); i++) {
+				char* text = patterns.get(i).get<char>(0);
+				std::string text_str(text);
+
+				std::string to_replace = va("%c:/", cha);
+				std::string replace_with = va("./%c", cha);
+
+				std::string replaced = text_str.replace(0, to_replace.length(), replace_with);
+
+				injector::WriteMemoryRaw(text, (char*)replaced.c_str(), replaced.length() + 1, true);
+			}
+		}
 	}
 }
 
@@ -349,7 +371,6 @@ static InitFunction Wmmt5Func([]()
 	{
 		fclose(fileG);
 	}
-
 
 	bool isTerminal = false;
 	if (ToBool(config["General"]["TerminalMode"]))
@@ -433,34 +454,7 @@ static InitFunction Wmmt5Func([]()
 		}
 	}
 
-	auto chars = { 'F', 'G' };
-
-	for (auto cha : chars)
-	{
-		auto patterns = hook::pattern(va("%02X 3A 2F", cha));
-
-		if (patterns.size() > 0)
-		{
-			for (int i = 0; i < patterns.size(); i++)
-			{
-				char* text = patterns.get(i).get<char>(0);
-				std::string text_str(text);
-
-				std::string to_replace = va("%c:/", cha);
-				std::string replace_with = va("./%c", cha);
-
-				std::string replaced = text_str.replace(0, to_replace.length(), replace_with);
-
-				injector::WriteMemoryRaw(text, (char*)replaced.c_str(), replaced.length() + 1, true);
-			}
-		}
-	}
-
-	if (ToBool(config["General"]["SkipMovies"]))
-	{
-		// Skip movies fuck you wmmt5
-		safeJMP(imageBase + 0x806020, ReturnTrue);
-	}
+	PathFix();
 
 	// Save story stuff (only 05)
 	{
