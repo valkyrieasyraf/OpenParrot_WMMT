@@ -59,7 +59,7 @@ syscfg-client_connect=tcp:127.0.0.1:12345
 
 [MuchaCAConfig]
 cacfg-game_cd=WM51
-cacfg-game_ver=00.06
+cacfg-game_ver=00.05
 cacfg-game_board_type=0
 cacfg-game_board_id=WM5
 cacfg-auth_server_url=https://0.0.0.0:10082/
@@ -551,7 +551,7 @@ static void PrepareAMAuth() {
 	};
 
 	GameVer actualGameVer = W5P;
-	if ((GameVersion.compare("WM510JPN06") == 0)) actualGameVer = WM5;
+	if ((GameVersion.compare("WM510JPN05") == 0)) actualGameVer = WM5;
 	else if ((GameVersion.compare("W5X10JPN02") == 0)) actualGameVer = W5X;
 	else if ((GameVersion.compare("W5P10JPN05") == 0) || (GameVersion.compare("W5X10JPN05") == 0) || (GameVersion.compare("W5X10JPN12") == 0)) actualGameVer = W5P;
 	else if ((GameVersion.compare("WM610JPN04") == 0)) actualGameVer = WM6;

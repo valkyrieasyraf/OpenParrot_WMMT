@@ -332,7 +332,7 @@ static InitFunction Wmmt5Func([]()
 	// Alloc debug console
 	FreeConsole();
 	AllocConsole();
-	SetConsoleTitle(L"Maxitune5 Console");
+	SetConsoleTitle(L"WMMT5 Console");
 
 	FILE* pNewStdout = nullptr;
 	FILE* pNewStderr = nullptr;
