@@ -693,7 +693,12 @@ static InitFunction Wmmt5Func([]() {
 	//pMaxituneWndProc = (WindowProcedure_t)(hook::get_pattern("48 89 5C 24 08 48 89 6C 24 10 48 89 74 24 18 57 48 83 EC 30 8B EA BA EB FF FF FF 49 8B F9 49 8B F0 48 8B D9 FF 15 ? ? ? 00 48 85 C0 74 1D 4C", 0));
 
 	//load banapass emu
-	LoadLibraryA(".\\OpenBanaW5p5.dll");
+	if ((GameVersion.compare("W5X10JPN05") == 0) || (GameVersion.compare("W5X10JPN12") == 0)) {
+		LoadLibraryA(".\\OpenBanaW5X.dll");
+	}
+	else {
+		LoadLibraryA(".\\OpenBanaW5p5.dll");
+	}
 
 	// Prevents game from setting time, thanks pockywitch!
 	MH_CreateHookApi(L"KERNEL32", "SetSystemTime", Hook_SetSystemTime, reinterpret_cast<LPVOID*>(&pSetSystemTime));

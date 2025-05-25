@@ -185,7 +185,7 @@ dtmode-io_conv=DECEXP
 dtmode-io_passphrase=Qx8hJ1KilweAp5Xm
 )";
 
-static const unsigned char AMConfigW5X_P[] = R"(
+static const unsigned char AMConfigW5X_P_05[] = R"(
 [AMUpdaterConfig] 
 ;; AMUpdater Configuration
 amucfg-title=WANGAN MIDNIGHT MAXIMUM TUNE 5DX
@@ -234,9 +234,9 @@ syscfg-client_connect=tcp:127.0.0.1:12345
 
 [MuchaCAConfig]
 cacfg-game_cd=W5X2
-cacfg-game_ver=00.02
+cacfg-game_ver=00.05
 cacfg-game_board_type=0
-cacfg-game_board_id=WM5
+cacfg-game_board_id=W5X
 cacfg-auth_server_url=https://0.0.0.0:10082/
 cacfg-auth_server_sslverify=0
 cacfg-auth_server_sslcafile=.\front.mucha-prd.nbgi-amnet.jp.cacert.pem
@@ -269,6 +269,103 @@ dtcfg-dl_lan_recv_timeout=
 [MuchaDtModeConfig]
 dtmode-io_dir=E:\
 dtmode-io_file=W5X10JPN
+dtmode-io_conv=DECEXP
+dtmode-io_passphrase=Qx8hJ1KilweAp5Xm
+)";
+
+static const unsigned char AMConfigW5X_P_12[] = R"(
+[AMUpdaterConfig] 
+;; AMUpdater 一般設定
+amucfg-title=湾岸ミッドナイトMAXIMUM TUNE 5DX PLUS
+amucfg-lang=JP
+amucfg-countdown=5
+amucfg-h_resol=1360
+amucfg-v_resol=768
+amucfg-logfile=.\amupdater.log
+amucfg-game_rev=2
+
+[AMAuthdConfig] 
+;; AMAuthd 一般設定
+amdcfg-authType=ALL.NET
+amdcfg-sleepTime=50
+amdcfg-resoNameTimeout=180
+amdcfg-writableConfig=.\WritableConfig.ini
+amdcfg-showConsole=ENABLE
+amdcfg-logfile=
+amdcfg-export_log=
+amdcfg-offlineMode=DISABLE
+
+[AllnetConfig] 
+;; ALL.Net 一般設定
+allcfg-gameID=SBWJ
+allcfg-gameVer=7.00
+
+[AllnetOptionRevalTime]
+;; ALL.Net 再認証時刻設定
+allopt-reval_hour=7
+allopt-reval_minute=0
+allopt-reval_second=0
+
+[AllnetOptionTimeout]
+;; ALL.Net 通信タイムアウト設定
+allopt-timeout_connect=60000  
+allopt-timeout_send=60000
+allopt-timeout_recv=60000
+
+[MuchaAppConfig]
+;; mucha_app 設定
+appcfg-logfile=.\muchaapp.log
+appcfg-loglevel=INFO
+
+[MuchaSysConfig]
+;; MUCHA システム設定
+syscfg-daemon_exe=.\MuchaBin\muchacd.exe
+syscfg-daemon_pidfile=.\MuchaBin\muchacd.pid
+syscfg-daemon_logfile=.\MuchaBin\muchacd.log
+syscfg-daemon_loglevel=INFO
+syscfg-daemon_listen=tcp:0.0.0.0:12345
+syscfg-client_connect=tcp:127.0.0.1:12345
+
+[MuchaCAConfig]
+;; MUCHA 認証設定
+cacfg-game_cd=W5X1
+cacfg-game_ver=12.07
+cacfg-game_board_type=0
+cacfg-game_board_id=W5X
+cacfg-auth_server_url=https://0.0.0.0:10082/
+cacfg-auth_server_sslverify=0
+cacfg-auth_server_sslcafile=.\front.mucha-prd.nbgi-amnet.jp.cacert.pem
+cacfg-auth_server_timeout=600
+cacfg-interval_ainfo_renew=10
+cacfg-interval_ainfo_retry=10
+
+[MuchaDtConfig]
+;; MUCHA ファイル配信 (DT) 設定
+dtcfg-dl_product_id=0x57355031
+dtcfg-dl_chunk_size=0x10000
+dtcfg-dl_image_path=.\dl_image
+dtcfg-dl_image_size=0
+dtcfg-dl_image_type=RAW
+dtcfg-dl_image_crypt_key=0x19535520
+dtcfg-dl_log_level=INFO
+dtcfg-dl_lan_crypt_key=0x75lx0126s476ss3b
+dtcfg-dl_lan_broadcast_interval=1000
+dtcfg-dl_lan_udp_port=8765
+dtcfg-dl_lan_bandwidth_limit=0
+dtcfg-dl_lan_broadcast_address=0.0.0.0
+dtcfg-dl_wan_retry_limit=
+dtcfg-dl_wan_retry_interval=
+dtcfg-dl_wan_send_timeout=
+dtcfg-dl_wan_recv_timeout=
+dtcfg-dl_lan_retry_limit=
+dtcfg-dl_lan_retry_interval=
+dtcfg-dl_lan_send_timeout=
+dtcfg-dl_lan_recv_timeout=
+
+[MuchaDtModeConfig]
+;; MUCHA ファイル配信モード設定
+dtmode-io_dir=E:\
+dtmode-io_file=W5X10CHN
 dtmode-io_conv=DECEXP
 dtmode-io_passphrase=Qx8hJ1KilweAp5Xm
 )";
@@ -578,12 +675,12 @@ static void PrepareAMAuth() {
 			break;
 		}
 		else if ((GameVersion.compare("W5X10JPN05") == 0)) {
-			fwrite(AMConfigW5X_P, 1, sizeof(AMConfigW5X_P), AMConfigWrite);
+			fwrite(AMConfigW5X_P_05, 1, sizeof(AMConfigW5X_P_05), AMConfigWrite);
 			fclose(AMConfigWrite);
 			break;
 		}
 		else if ((GameVersion.compare("W5X10JPN12") == 0)) {
-			fwrite(AMConfigW5X_P, 1, sizeof(AMConfigW5X_P), AMConfigWrite);
+			fwrite(AMConfigW5X_P_12, 1, sizeof(AMConfigW5X_P_12), AMConfigWrite);
 			fclose(AMConfigWrite);
 			break;
 		}
@@ -604,12 +701,12 @@ static void PrepareAMAuth() {
 			break;
 		}
 		else if ((GameVersion.compare("W5X10JPN05") == 0)) {
-			fwrite(AMConfigW5X_P, 1, sizeof(AMConfigW5X_P), AMConfigWrite);
+			fwrite(AMConfigW5X_P_05, 1, sizeof(AMConfigW5X_P_05), AMConfigWrite);
 			fclose(AMConfigWrite);
 			break;
 		}
 		else if ((GameVersion.compare("W5X10JPN12") == 0)) {
-			fwrite(AMConfigW5X_P, 1, sizeof(AMConfigW5X_P), AMConfigWrite);
+			fwrite(AMConfigW5X_P_12, 1, sizeof(AMConfigW5X_P_12), AMConfigWrite);
 			fclose(AMConfigWrite);
 			break;
 		}
