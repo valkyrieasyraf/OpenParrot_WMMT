@@ -221,7 +221,8 @@ static void PathFix() {
 				std::string text_str(text);
 
 				std::string to_replace = va("%c:/", cha);
-				std::string replace_with = va("./%c", cha);
+				//std::string replace_with = va("./%c", cha);
+				std::string replace_with = va("_%c/", cha);
 
 				std::string replaced = text_str.replace(0, to_replace.length(), replace_with);
 

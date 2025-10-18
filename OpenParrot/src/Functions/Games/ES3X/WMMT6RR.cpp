@@ -73,7 +73,6 @@ static unsigned int WINAPI Hook_bind(SOCKET s, const sockaddr* addr, int namelen
 	}
 	else {
 		return pbind(s, addr, namelen);
-
 	}
 }
 
@@ -163,7 +162,6 @@ static void PathFix() {
 }
 
 extern "C" {
-
 	int32_t xRes;
 	int32_t yRes;
 	float ratio;
@@ -186,7 +184,6 @@ extern "C" {
 
 typedef BOOL(WINAPI* ShowWindow_t)(HWND, int);
 static ShowWindow_t pShowWindow;
-
 
 // Hello Win32 my old friend...
 typedef LRESULT(WINAPI* WindowProcedure_t)(HWND, UINT, WPARAM, LPARAM);
@@ -452,7 +449,6 @@ static void prepareCerts() {
 }
 
 static InitFunction Wmmt6RRFunc([]() {
-
 	prepareCerts();
 
 	// Alloc debug console
@@ -597,7 +593,6 @@ static InitFunction Wmmt6RRFunc([]() {
 	}
 
 	MH_EnableHook(MH_ALL_HOOKS);
-
 	}, GameID::WMMT6RR);
 #endif
 #pragma optimize("", on)
