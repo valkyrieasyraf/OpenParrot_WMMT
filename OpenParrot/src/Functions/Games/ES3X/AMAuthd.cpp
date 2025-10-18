@@ -726,6 +726,8 @@ static void PrepareAMAuth() {
 	FILE* AMConfigWrite = fopen("AMConfig.ini", "w");
 	std::string GameVersion = config["Authentication"]["GameVersion"];
 	std::string tpuiLocation = config["TeknoParrotUi"]["exeLocation"];
+	std::string forceVersionEnabled = config["Game"]["ForceUseSoftwareRevision(Loader)"];
+	std::string forceVersion = config["Game"]["ForceUseSoftwareRevision"];
 
 	std::string gameVer = "W6W";
 	std::string gameSetVer = GameVersion;
@@ -743,14 +745,24 @@ static void PrepareAMAuth() {
 	{
 		int revision = GetSoftwareRevision(tpuiLocation, gameVer);
 		std::string finalConfig;
-		if (revision != -1) {
-			auto [gameVersion1, gameVersion2] = FormatSoftwareRevisionDual(revision);
+		if (forceVersionEnabled == "1" && !forceVersion.empty())
+		{
+			auto [gameVersion1, gameVersion2] = FormatSoftwareRevisionDual(std::stoi(forceVersion));
 
 			std::string configText(reinterpret_cast<const char*>(AMConfigWM5), sizeof(AMConfigWM5));
 			finalConfig = UpdateGameVersion(configText, gameVersion1, gameVersion2);
 		}
-		else {
-			finalConfig = std::string(reinterpret_cast<const char*>(AMConfigWM5), sizeof(AMConfigWM5));
+		else
+		{
+			if (revision != -1) {
+				auto [gameVersion1, gameVersion2] = FormatSoftwareRevisionDual(revision);
+
+				std::string configText(reinterpret_cast<const char*>(AMConfigWM5), sizeof(AMConfigWM5));
+				finalConfig = UpdateGameVersion(configText, gameVersion1, gameVersion2);
+			}
+			else {
+				finalConfig = std::string(reinterpret_cast<const char*>(AMConfigWM5), sizeof(AMConfigWM5));
+			}
 		}
 		fwrite(finalConfig.c_str(), 1, finalConfig.size(), AMConfigWrite);
 		fclose(AMConfigWrite);
@@ -760,14 +772,24 @@ static void PrepareAMAuth() {
 	{
 		int revision = GetSoftwareRevision(tpuiLocation, gameVer);
 		std::string finalConfig;
-		if (revision != -1) {
-			auto [gameVersion1, gameVersion2] = FormatSoftwareRevisionDual(revision);
+		if (forceVersionEnabled == "1" && !forceVersion.empty())
+		{
+			auto [gameVersion1, gameVersion2] = FormatSoftwareRevisionDual(std::stoi(forceVersion));
 
 			std::string configText(reinterpret_cast<const char*>(AMConfigW5X), sizeof(AMConfigW5X));
 			finalConfig = UpdateGameVersion(configText, gameVersion1, gameVersion2);
 		}
-		else {
-			finalConfig = std::string(reinterpret_cast<const char*>(AMConfigW5X), sizeof(AMConfigW5X));
+		else
+		{
+			if (revision != -1) {
+				auto [gameVersion1, gameVersion2] = FormatSoftwareRevisionDual(revision);
+
+				std::string configText(reinterpret_cast<const char*>(AMConfigW5X), sizeof(AMConfigW5X));
+				finalConfig = UpdateGameVersion(configText, gameVersion1, gameVersion2);
+			}
+			else {
+				finalConfig = std::string(reinterpret_cast<const char*>(AMConfigW5X), sizeof(AMConfigW5X));
+			}
 		}
 		fwrite(finalConfig.c_str(), 1, finalConfig.size(), AMConfigWrite);
 		fclose(AMConfigWrite);
@@ -777,14 +799,24 @@ static void PrepareAMAuth() {
 	{
 		int revision = GetSoftwareRevision(tpuiLocation, gameVer);
 		std::string finalConfig;
-		if (revision != -1) {
-			auto [gameVersion1, gameVersion2] = FormatSoftwareRevisionDual(revision);
+		if (forceVersionEnabled == "1" && !forceVersion.empty())
+		{
+			auto [gameVersion1, gameVersion2] = FormatSoftwareRevisionDual(std::stoi(forceVersion));
 
 			std::string configText(reinterpret_cast<const char*>(AMConfigW5P), sizeof(AMConfigW5P));
 			finalConfig = UpdateGameVersion(configText, gameVersion1, gameVersion2);
 		}
-		else {
-			finalConfig = std::string(reinterpret_cast<const char*>(AMConfigW5P), sizeof(AMConfigW5P));
+		else
+		{
+			if (revision != -1) {
+				auto [gameVersion1, gameVersion2] = FormatSoftwareRevisionDual(revision);
+
+				std::string configText(reinterpret_cast<const char*>(AMConfigW5P), sizeof(AMConfigW5P));
+				finalConfig = UpdateGameVersion(configText, gameVersion1, gameVersion2);
+			}
+			else {
+				finalConfig = std::string(reinterpret_cast<const char*>(AMConfigW5P), sizeof(AMConfigW5P));
+			}
 		}
 		fwrite(finalConfig.c_str(), 1, finalConfig.size(), AMConfigWrite);
 		fclose(AMConfigWrite);
@@ -794,14 +826,24 @@ static void PrepareAMAuth() {
 	{
 		int revision = GetSoftwareRevision(tpuiLocation, gameVer);
 		std::string finalConfig;
-		if (revision != -1) {
-			auto [gameVersion1, gameVersion2] = FormatSoftwareRevisionDual(revision);
+		if (forceVersionEnabled == "1" && !forceVersion.empty())
+		{
+			auto [gameVersion1, gameVersion2] = FormatSoftwareRevisionDual(std::stoi(forceVersion));
 
 			std::string configText(reinterpret_cast<const char*>(AMConfigWM6), sizeof(AMConfigWM6));
 			finalConfig = UpdateGameVersion(configText, gameVersion1, gameVersion2);
 		}
-		else {
-			finalConfig = std::string(reinterpret_cast<const char*>(AMConfigWM6), sizeof(AMConfigWM6));
+		else
+		{
+			if (revision != -1) {
+				auto [gameVersion1, gameVersion2] = FormatSoftwareRevisionDual(revision);
+
+				std::string configText(reinterpret_cast<const char*>(AMConfigWM6), sizeof(AMConfigWM6));
+				finalConfig = UpdateGameVersion(configText, gameVersion1, gameVersion2);
+			}
+			else {
+				finalConfig = std::string(reinterpret_cast<const char*>(AMConfigWM6), sizeof(AMConfigWM6));
+			}
 		}
 		fwrite(finalConfig.c_str(), 1, finalConfig.size(), AMConfigWrite);
 		fclose(AMConfigWrite);
@@ -811,14 +853,24 @@ static void PrepareAMAuth() {
 	{
 		int revision = GetSoftwareRevision(tpuiLocation, gameVer);
 		std::string finalConfig;
-		if (revision != -1) {
-			auto [gameVersion1, gameVersion2] = FormatSoftwareRevisionDual(revision);
+		if (forceVersionEnabled == "1" && !forceVersion.empty())
+		{
+			auto [gameVersion1, gameVersion2] = FormatSoftwareRevisionDual(std::stoi(forceVersion));
 
 			std::string configText(reinterpret_cast<const char*>(AMConfigW6R), sizeof(AMConfigW6R));
 			finalConfig = UpdateGameVersion(configText, gameVersion1, gameVersion2);
 		}
-		else {
-			finalConfig = std::string(reinterpret_cast<const char*>(AMConfigW6R), sizeof(AMConfigW6R));
+		else
+		{
+			if (revision != -1) {
+				auto [gameVersion1, gameVersion2] = FormatSoftwareRevisionDual(revision);
+
+				std::string configText(reinterpret_cast<const char*>(AMConfigW6R), sizeof(AMConfigW6R));
+				finalConfig = UpdateGameVersion(configText, gameVersion1, gameVersion2);
+			}
+			else {
+				finalConfig = std::string(reinterpret_cast<const char*>(AMConfigW6R), sizeof(AMConfigW6R));
+			}
 		}
 		fwrite(finalConfig.c_str(), 1, finalConfig.size(), AMConfigWrite);
 		fclose(AMConfigWrite);
@@ -828,14 +880,24 @@ static void PrepareAMAuth() {
 	{
 		int revision = GetSoftwareRevision(tpuiLocation, gameVer);
 		std::string finalConfig;
-		if (revision != -1) {
-			auto [gameVersion1, gameVersion2] = FormatSoftwareRevisionDual(revision);
+		if (forceVersionEnabled == "1" && !forceVersion.empty())
+		{
+			auto [gameVersion1, gameVersion2] = FormatSoftwareRevisionDual(std::stoi(forceVersion));
 
 			std::string configText(reinterpret_cast<const char*>(AMConfigW6W), sizeof(AMConfigW6W));
 			finalConfig = UpdateGameVersion(configText, gameVersion1, gameVersion2);
 		}
-		else {
-			finalConfig = std::string(reinterpret_cast<const char*>(AMConfigW6W), sizeof(AMConfigW6W));
+		else
+		{
+			if (revision != -1) {
+				auto [gameVersion1, gameVersion2] = FormatSoftwareRevisionDual(revision);
+
+				std::string configText(reinterpret_cast<const char*>(AMConfigW6W), sizeof(AMConfigW6W));
+				finalConfig = UpdateGameVersion(configText, gameVersion1, gameVersion2);
+			}
+			else {
+				finalConfig = std::string(reinterpret_cast<const char*>(AMConfigW6W), sizeof(AMConfigW6W));
+			}
 		}
 		fwrite(finalConfig.c_str(), 1, finalConfig.size(), AMConfigWrite);
 		fclose(AMConfigWrite);
@@ -845,14 +907,24 @@ static void PrepareAMAuth() {
 	{
 		int revision = GetSoftwareRevision(tpuiLocation, gameVer);
 		std::string finalConfig;
-		if (revision != -1) {
-			auto [gameVersion1, gameVersion2] = FormatSoftwareRevisionDual(revision);
+		if (forceVersionEnabled == "1" && !forceVersion.empty())
+		{
+			auto [gameVersion1, gameVersion2] = FormatSoftwareRevisionDual(std::stoi(forceVersion));
 
 			std::string configText(reinterpret_cast<const char*>(AMConfigW6P), sizeof(AMConfigW6P));
 			finalConfig = UpdateGameVersion(configText, gameVersion1, gameVersion2);
 		}
-		else {
-			finalConfig = std::string(reinterpret_cast<const char*>(AMConfigW6P), sizeof(AMConfigW6P));
+		else
+		{
+			if (revision != -1) {
+				auto [gameVersion1, gameVersion2] = FormatSoftwareRevisionDual(revision);
+
+				std::string configText(reinterpret_cast<const char*>(AMConfigW6P), sizeof(AMConfigW6P));
+				finalConfig = UpdateGameVersion(configText, gameVersion1, gameVersion2);
+			}
+			else {
+				finalConfig = std::string(reinterpret_cast<const char*>(AMConfigW6P), sizeof(AMConfigW6P));
+			}
 		}
 		fwrite(finalConfig.c_str(), 1, finalConfig.size(), AMConfigWrite);
 		fclose(AMConfigWrite);
