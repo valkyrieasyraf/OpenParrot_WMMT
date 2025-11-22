@@ -13,7 +13,6 @@
 #pragma optimize("", off)
 #pragma comment(lib, "Ws2_32.lib")
 
-
 extern LPCSTR hookPort;
 uintptr_t imageBasedxplus;
 static unsigned char hasp_buffer[0xD40];
@@ -104,12 +103,10 @@ void GenerateDongleDataDxp(bool isTerminal) {
 	}
 }
 
-
 static HWND mt6Hwnd;
 
 typedef BOOL(WINAPI* ShowWindow_t)(HWND, int);
 static ShowWindow_t pShowWindow;
-
 
 // Hello Win32 my old friend...
 typedef LRESULT(WINAPI* WindowProcedure_t)(HWND, UINT, WPARAM, LPARAM);
@@ -175,7 +172,6 @@ static DWORD WINAPI SpamMulticast(LPVOID) {
 	bindAddr.sin_port = htons(50765);
 	bind(sock, (sockaddr*)&bindAddr, sizeof(bindAddr));
 
-
 	ip_mreq mreq;
 	mreq.imr_multiaddr.s_addr = inet_addr("225.0.0.1");
 	mreq.imr_interface.s_addr = inet_addr(ipaddrdxplus);
@@ -205,7 +201,6 @@ unsigned int WINAPI Hook_bind_w5p(SOCKET s, const sockaddr* addr, int namelen) {
 	}
 	else {
 		return pbindw5p(s, addr, namelen);
-
 	}
 }
 
@@ -231,7 +226,6 @@ static void PathFix() {
 		}
 	}
 }
-
 
 // array size is 1107
 static const unsigned char terminal_cert_v388[] = {
@@ -460,7 +454,6 @@ static void prepareCerts() {
 }
 
 static InitFunction Wmmt5Func([]() {
-
 	prepareCerts();
 
 	// Alloc debug console
@@ -469,10 +462,6 @@ static InitFunction Wmmt5Func([]() {
 
 	std::string GameVersion = config["Authentication"]["GameVersion"];
 	std::wstring ConsoleTitle = L"W5P Console";
-
-	if ((GameVersion.compare("W5X10JPN05") == 0) || (GameVersion.compare("W5X10JPN12") == 0)) {
-		ConsoleTitle = L"W5X Console";
-	}
 
 	SetConsoleTitle(ConsoleTitle.c_str());
 
@@ -694,10 +683,8 @@ static InitFunction Wmmt5Func([]() {
 	//pMaxituneWndProc = (WindowProcedure_t)(hook::get_pattern("48 89 5C 24 08 48 89 6C 24 10 48 89 74 24 18 57 48 83 EC 30 8B EA BA EB FF FF FF 49 8B F9 49 8B F0 48 8B D9 FF 15 ? ? ? 00 48 85 C0 74 1D 4C", 0));
 
 	//load banapass emu
-	if ((GameVersion.compare("W5X10JPN05") == 0) || (GameVersion.compare("W5X10JPN12") == 0)) {
-		LoadLibraryA(".\\OpenBanaW5X.dll");
-	}
-	else {
+	if (!ToBool(config["BanaPassport"]["UseHardwareCardReader"]))
+	{
 		LoadLibraryA(".\\OpenBanaW5p5.dll");
 	}
 
@@ -744,7 +731,6 @@ static InitFunction Wmmt5Func([]() {
 	injector::MakeNOP(imageBasedxplus + 0xE8DE7, 5);
 
 	MH_EnableHook(MH_ALL_HOOKS);
-
 	}, GameID::WMMT5DXPlus);
 #endif
 #pragma optimize("", on)
