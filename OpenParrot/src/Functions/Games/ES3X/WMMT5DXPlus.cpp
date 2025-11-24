@@ -683,7 +683,11 @@ static InitFunction Wmmt5Func([]() {
 	//pMaxituneWndProc = (WindowProcedure_t)(hook::get_pattern("48 89 5C 24 08 48 89 6C 24 10 48 89 74 24 18 57 48 83 EC 30 8B EA BA EB FF FF FF 49 8B F9 49 8B F0 48 8B D9 FF 15 ? ? ? 00 48 85 C0 74 1D 4C", 0));
 
 	//load banapass emu
-	if (!ToBool(config["BanaPassport"]["UseHardwareCardReader"]))
+	if (ToBool(config["BanaPassport"]["UseHardwareCardReader"]))
+	{
+		OutputDebugStringA("Use Hardware Card Reader: On\n");
+	}
+	else
 	{
 		LoadLibraryA(".\\OpenBanaW5p5.dll");
 	}
