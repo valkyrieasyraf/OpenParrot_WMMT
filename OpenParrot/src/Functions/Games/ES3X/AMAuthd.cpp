@@ -158,7 +158,7 @@ syscfg-client_connect=tcp:127.0.0.1:12345
 
 [MuchaCAConfig]
 cacfg-game_cd=WM51
-cacfg-game_ver=00.05
+cacfg-game_ver=05.00
 cacfg-game_board_type=0
 cacfg-game_board_id=WM5
 cacfg-auth_server_url=https://0.0.0.0:10082/

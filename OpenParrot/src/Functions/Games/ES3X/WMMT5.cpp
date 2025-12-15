@@ -463,6 +463,17 @@ static InitFunction Wmmt5Func([]()
 		CreateThread(0, 0, Wmmt5FfbCollector, 0, 0, 0);
 	}
 
+	// Ghost fix
+	// Fix protobuf repeated_field bounds check crash
+	// Changes JNZ to JMP at 0x1409C92ED to skip the exception throw
+	// It's uncertain whether this is a final fix, but at least it won't crash during avatar settlement.
+	{
+		auto location = hook::get_pattern<char>("75 6A 8B 7E 10 48 8B 5E 08");
+		if (location) {
+			injector::WriteMemory<uint8_t>(location, 0xEB, true); // JNZ -> JMP
+		}
+	}
+
 	MH_EnableHook(MH_ALL_HOOKS);
 
 }, GameID::WMMT5);
