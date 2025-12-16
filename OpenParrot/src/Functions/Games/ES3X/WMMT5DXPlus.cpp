@@ -467,6 +467,162 @@ static void prepareCerts() {
 	return;
 }
 
+static void ApplyResolutionPatch(uintptr_t imageBase, short Xres, short Yres) {
+	// 0x9426B8
+	{
+		auto location1 = imageBase + 0x9426B8;
+		injector::WriteMemory<uint8_t>(location1, 0xE9, true);
+		injector::WriteMemory<uint8_t>(location1 + 1, 0xBF, true);
+		injector::WriteMemory<uint8_t>(location1 + 2, 0x28, true);
+		injector::WriteMemory<uint8_t>(location1 + 3, 0x5A, true);
+		injector::WriteMemory<uint8_t>(location1 + 4, 0x00, true);
+		injector::WriteMemory<uint8_t>(location1 + 5, 0x90, true);
+	}
+	// 0x9449B9
+	{
+		auto location2 = imageBase + 0x9449B9;
+		injector::WriteMemory<uint8_t>(location2, 0xE9, true);
+		injector::WriteMemory<uint8_t>(location2 + 1, 0xD6, true);
+		injector::WriteMemory<uint8_t>(location2 + 2, 0x05, true);
+		injector::WriteMemory<uint8_t>(location2 + 3, 0x5A, true);
+		injector::WriteMemory<uint8_t>(location2 + 4, 0x00, true);
+	}
+	// 0xEE4F7C
+	{
+		uint8_t buffer4[46] = {
+			199, 69, 168, 85, 85, 53, 63, 243, 68, 15,
+			89, 93, 168, 243, 68, 15, 17, 93, 168, 233,
+			42, 215, 165, 255, 199, 69, 216, 85, 85, 53,
+			63, 243, 15, 89, 69, 216, 243, 15, 17, 69,
+			216, 233, 20, 250, 165, 255
+		};
+		auto location = imageBase + 0xEE4F7C;
+		for (int i = 0; i < 46; ++i) {
+			injector::WriteMemory<uint8_t>(location + i, buffer4[i], true);
+		}
+	}
+	// Xres
+	{
+		uint8_t bytes[2]{};
+		bytes[0] = static_cast<uint8_t>(Xres & 0xFF);
+		bytes[1] = static_cast<uint8_t>((Xres >> 8) & 0xFF);
+
+		auto location1 = imageBase + 0x23612B;
+		injector::WriteMemory<uint8_t>(location1, bytes[0], true);
+		injector::WriteMemory<uint8_t>(location1 + 1, bytes[1], true);
+
+		auto location2 = imageBase + 0xB849AB;
+		injector::WriteMemory<uint8_t>(location2, bytes[0], true);
+		injector::WriteMemory<uint8_t>(location2 + 1, bytes[1], true);
+
+		auto location3 = imageBase + 0xB84272;
+		injector::WriteMemory<uint8_t>(location3, bytes[0], true);
+		injector::WriteMemory<uint8_t>(location3 + 1, bytes[1], true);
+	}
+	// Yres
+	{
+		uint8_t bytes2[2]{};
+		bytes2[0] = static_cast<uint8_t>(Yres & 0xFF);
+		bytes2[1] = static_cast<uint8_t>((Yres >> 8) & 0xFF);
+
+		auto location1 = imageBase + 0x236131;
+		injector::WriteMemory<uint8_t>(location1, bytes2[0], true);
+		injector::WriteMemory<uint8_t>(location1 + 1, bytes2[1], true);
+
+		auto location2 = imageBase + 0xB849B3;
+		injector::WriteMemory<uint8_t>(location2, bytes2[0], true);
+		injector::WriteMemory<uint8_t>(location2 + 1, bytes2[1], true);
+
+		auto location3 = imageBase + 0xB8427F;
+		injector::WriteMemory<uint8_t>(location3, bytes2[0], true);
+		injector::WriteMemory<uint8_t>(location3 + 1, bytes2[1], true);
+	}
+	// Ratio
+	{
+		float value = 765.0f / static_cast<float>(Yres);
+		uint8_t bytes[4];
+		std::memcpy(bytes, &value, sizeof(value));
+
+		auto location1 = imageBase + 0xEE4F7F;
+		injector::WriteMemory<uint8_t>(location1, bytes[0], true);
+		injector::WriteMemory<uint8_t>(location1 + 1, bytes[1], true);
+		injector::WriteMemory<uint8_t>(location1 + 2, bytes[2], true);
+		injector::WriteMemory<uint8_t>(location1 + 3, bytes[3], true);
+
+		auto location2 = imageBase + 0xEE4F97;
+		injector::WriteMemory<uint8_t>(location2, bytes[0], true);
+		injector::WriteMemory<uint8_t>(location2 + 1, bytes[1], true);
+		injector::WriteMemory<uint8_t>(location2 + 2, bytes[2], true);
+		injector::WriteMemory<uint8_t>(location2 + 3, bytes[3], true);
+	}
+	{
+		uint8_t buffer5[24] = {
+			57, 142, 227, 63, 243, 15, 17, 69, 176, 243,
+			15, 17, 77, 180, 243, 15, 17, 69, 144, 243,
+			15, 17, 77, 148
+		};
+
+		auto location1 = imageBase + 0x94267D;
+		auto location2 = imageBase + 0x943C6A;
+
+		injector::WriteMemory<uint8_t>(location1, buffer5[4], true);
+		injector::WriteMemory<uint8_t>(location1 + 1, buffer5[5], true);
+		injector::WriteMemory<uint8_t>(location1 + 2, buffer5[6], true);
+		injector::WriteMemory<uint8_t>(location1 + 3, buffer5[7], true);
+		injector::WriteMemory<uint8_t>(location1 + 4, buffer5[8], true);
+
+		injector::WriteMemory<uint8_t>(location2, buffer5[14], true);
+		injector::WriteMemory<uint8_t>(location2 + 1, buffer5[15], true);
+		injector::WriteMemory<uint8_t>(location2 + 2, buffer5[16], true);
+		injector::WriteMemory<uint8_t>(location2 + 3, buffer5[17], true);
+		injector::WriteMemory<uint8_t>(location2 + 4, buffer5[18], true);
+	}
+	{
+		uint8_t buffer6[4] = { 171, 170, 226, 63 };
+
+		auto location = imageBase + 0xEA569;
+
+		injector::WriteMemory<uint8_t>(location, buffer6[0], true);
+		injector::WriteMemory<uint8_t>(location + 1, buffer6[1], true);
+		injector::WriteMemory<uint8_t>(location + 2, buffer6[2], true);
+		injector::WriteMemory<uint8_t>(location + 3, buffer6[3], true);
+	}
+	{
+		uint8_t buffer[44] = { 0 };
+		auto location = imageBase + 0xEE4FAA;
+		for (int i = 0; i < 44; ++i) {
+			injector::WriteMemory<uint8_t>(location + i, buffer[i], true);
+		}
+	}
+}
+
+static void ParseResolutionConfig(const std::string& res, short& Xres, short& Yres) {
+	if (res.compare("1280x720") == 0) {
+		Xres = 1280;
+		Yres = 720;
+	}
+	else if (res.compare("1360x768") == 0) {
+		Xres = 1360;
+		Yres = 768;
+	}
+	else if (res.compare("1920x1080") == 0) {
+		Xres = 1920;
+		Yres = 1080;
+	}
+	else if (res.compare("2560x1440") == 0) {
+		Xres = 2560;
+		Yres = 1440;
+	}
+	else if (res.compare("3840x2160") == 0) {
+		Xres = 3840;
+		Yres = 2160;
+	}
+	else {
+		Xres = 1360;
+		Yres = 768;
+	}
+}
+
 static InitFunction Wmmt5Func([]() {
 	prepareCerts();
 
@@ -520,163 +676,12 @@ static InitFunction Wmmt5Func([]() {
 	hookPort = "COM3";
 	imageBasedxplus = (uintptr_t)GetModuleHandleA(0);
 
-	// RES TEST
-	short Xres = static_cast<short>(std::stoi("1360"));
-	short Yres = static_cast<short>(std::stoi("768"));
+	// Resolution patch
+	short Xres = 1360;
+	short Yres = 768;
 	std::string res = config["Resolution"]["RES"];
-	if (res.compare("1280x720") == 0) {
-		Xres = static_cast<short>(std::stoi("1280"));
-		Yres = static_cast<short>(std::stoi("720"));
-	}
-	else if (res.compare("1360x768") == 0) {
-		Xres = static_cast<short>(std::stoi("1360"));
-		Yres = static_cast<short>(std::stoi("768"));
-	}
-	else if (res.compare("1920x1080") == 0) {
-		Xres = static_cast<short>(std::stoi("1920"));
-		Yres = static_cast<short>(std::stoi("1080"));
-	}
-	else if (res.compare("2560x1440") == 0) {
-		Xres = static_cast<short>(std::stoi("2560"));
-		Yres = static_cast<short>(std::stoi("1440"));
-	}
-	else if (res.compare("3840x2160") == 0) {
-		Xres = static_cast<short>(std::stoi("3840"));
-		Yres = static_cast<short>(std::stoi("2160"));
-	}
-	else {
-		Xres = static_cast<short>(std::stoi("1360"));
-		Yres = static_cast<short>(std::stoi("768"));
-	}
-	// RES Patch
-	{
-		// 0x9426B8
-		{
-			auto location1 = imageBasedxplus + 0x9426B8;
-			injector::WriteMemory<uint8_t>(location1, 0xE9, true);
-			injector::WriteMemory<uint8_t>(location1 + 1, 0xBF, true);
-			injector::WriteMemory<uint8_t>(location1 + 2, 0x28, true);
-			injector::WriteMemory<uint8_t>(location1 + 3, 0x5A, true);
-			injector::WriteMemory<uint8_t>(location1 + 4, 0x00, true);
-			injector::WriteMemory<uint8_t>(location1 + 5, 0x90, true);
-		}
-		// 0x9449B9
-		{
-			auto location2 = imageBasedxplus + 0x9449B9;
-			injector::WriteMemory<uint8_t>(location2, 0xE9, true);
-			injector::WriteMemory<uint8_t>(location2 + 1, 0xD6, true);
-			injector::WriteMemory<uint8_t>(location2 + 2, 0x05, true);
-			injector::WriteMemory<uint8_t>(location2 + 3, 0x5A, true);
-			injector::WriteMemory<uint8_t>(location2 + 4, 0x00, true);
-		}
-		// 0xEE4F7C
-		{
-			uint8_t buffer4[46] = {
-				199, 69, 168, 85, 85, 53, 63, 243, 68, 15,
-				89, 93, 168, 243, 68, 15, 17, 93, 168, 233,
-				42, 215, 165, 255, 199, 69, 216, 85, 85, 53,
-				63, 243, 15, 89, 69, 216, 243, 15, 17, 69,
-				216, 233, 20, 250, 165, 255
-			};
-			auto location = imageBasedxplus + 0xEE4F7C;
-			for (int i = 0; i < 46; ++i) {
-				injector::WriteMemory<uint8_t>(location + i, buffer4[i], true);
-			}
-		}
-		// Xres
-		{
-			uint8_t bytes[2]{};
-			bytes[0] = static_cast<uint8_t>(Xres & 0xFF);
-			bytes[1] = static_cast<uint8_t>((Xres >> 8) & 0xFF);
-
-			auto location1 = imageBasedxplus + 0x23612B;
-			injector::WriteMemory<uint8_t>(location1, bytes[0], true);
-			injector::WriteMemory<uint8_t>(location1 + 1, bytes[1], true);
-
-			auto location2 = imageBasedxplus + 0xB849AB;
-			injector::WriteMemory<uint8_t>(location2, bytes[0], true);
-			injector::WriteMemory<uint8_t>(location2 + 1, bytes[1], true);
-
-			auto location3 = imageBasedxplus + 0xB84272;
-			injector::WriteMemory<uint8_t>(location3, bytes[0], true);
-			injector::WriteMemory<uint8_t>(location3 + 1, bytes[1], true);
-		}
-		// Yres
-		{
-			uint8_t bytes2[2]{};
-			bytes2[0] = static_cast<uint8_t>(Yres & 0xFF);
-			bytes2[1] = static_cast<uint8_t>((Yres >> 8) & 0xFF);
-
-			auto location1 = imageBasedxplus + 0x236131;
-			injector::WriteMemory<uint8_t>(location1, bytes2[0], true);
-			injector::WriteMemory<uint8_t>(location1 + 1, bytes2[1], true);
-
-			auto location2 = imageBasedxplus + 0xB849B3;
-			injector::WriteMemory<uint8_t>(location2, bytes2[0], true);
-			injector::WriteMemory<uint8_t>(location2 + 1, bytes2[1], true);
-
-			auto location3 = imageBasedxplus + 0xB8427F;
-			injector::WriteMemory<uint8_t>(location3, bytes2[0], true);
-			injector::WriteMemory<uint8_t>(location3 + 1, bytes2[1], true);
-		}
-		// Ratio
-		{
-			float value = 765.0f / static_cast<float>(Yres);
-			uint8_t bytes[4];
-			std::memcpy(bytes, &value, sizeof(value));
-
-			auto location1 = imageBasedxplus + 0xEE4F7F;
-			injector::WriteMemory<uint8_t>(location1, bytes[0], true);
-			injector::WriteMemory<uint8_t>(location1 + 1, bytes[1], true);
-			injector::WriteMemory<uint8_t>(location1 + 2, bytes[2], true);
-			injector::WriteMemory<uint8_t>(location1 + 3, bytes[3], true);
-
-			auto location2 = imageBasedxplus + 0xEE4F97;
-			injector::WriteMemory<uint8_t>(location2, bytes[0], true);
-			injector::WriteMemory<uint8_t>(location2 + 1, bytes[1], true);
-			injector::WriteMemory<uint8_t>(location2 + 2, bytes[2], true);
-			injector::WriteMemory<uint8_t>(location2 + 3, bytes[3], true);
-		}
-		{
-			uint8_t buffer5[24] = {
-				57, 142, 227, 63, 243, 15, 17, 69, 176, 243,
-				15, 17, 77, 180, 243, 15, 17, 69, 144, 243,
-				15, 17, 77, 148
-			};
-
-			auto location1 = imageBasedxplus + 0x94267D;
-			auto location2 = imageBasedxplus + 0x943C6A;
-
-			injector::WriteMemory<uint8_t>(location1, buffer5[4], true);
-			injector::WriteMemory<uint8_t>(location1 + 1, buffer5[5], true);
-			injector::WriteMemory<uint8_t>(location1 + 2, buffer5[6], true);
-			injector::WriteMemory<uint8_t>(location1 + 3, buffer5[7], true);
-			injector::WriteMemory<uint8_t>(location1 + 4, buffer5[8], true);
-
-			injector::WriteMemory<uint8_t>(location2, buffer5[14], true);
-			injector::WriteMemory<uint8_t>(location2 + 1, buffer5[15], true);
-			injector::WriteMemory<uint8_t>(location2 + 2, buffer5[16], true);
-			injector::WriteMemory<uint8_t>(location2 + 3, buffer5[17], true);
-			injector::WriteMemory<uint8_t>(location2 + 4, buffer5[18], true);
-		}
-		{
-			uint8_t buffer6[4] = { 171, 170, 226, 63 };
-
-			auto location = imageBasedxplus + 0xEA569;
-
-			injector::WriteMemory<uint8_t>(location, buffer6[0], true);
-			injector::WriteMemory<uint8_t>(location + 1, buffer6[1], true);
-			injector::WriteMemory<uint8_t>(location + 2, buffer6[2], true);
-			injector::WriteMemory<uint8_t>(location + 3, buffer6[3], true);
-		}
-		{
-			uint8_t buffer[44] = { 0 };
-			auto location = imageBasedxplus + 0xEE4FAA;
-			for (int i = 0; i < 44; ++i) {
-				injector::WriteMemory<uint8_t>(location + i, buffer[i], true);
-			}
-		}
-	}
+	ParseResolutionConfig(res, Xres, Yres);
+	ApplyResolutionPatch(imageBasedxplus, Xres, Yres);
 
 	MH_Initialize();
 
