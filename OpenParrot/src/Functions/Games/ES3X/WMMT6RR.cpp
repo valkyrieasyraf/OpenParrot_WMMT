@@ -161,6 +161,20 @@ static void PathFix() {
 	}
 }
 
+typedef void (WINAPI* OutputDebugStringW_t)(LPCWSTR);
+static OutputDebugStringW_t pOriginalOutputDebugStringW = nullptr;
+// Hook OutputDebugStringW to capture game debug output
+static void WINAPI Hook_OutputDebugStringW(LPCWSTR str) {
+	if (str) {
+		HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+		DWORD written;
+		WriteConsoleW(hConsole, str, (DWORD)wcslen(str), &written, NULL);
+	}
+	if (pOriginalOutputDebugStringW) {
+		pOriginalOutputDebugStringW(str);
+	}
+}
+
 extern "C" {
 	int32_t xRes;
 	int32_t yRes;
@@ -544,6 +558,7 @@ static InitFunction Wmmt6RRFunc([]() {
 	MH_CreateHookApi(L"nbamUsbFinder.dll", "nbamUsbFinderRelease", nbamUsbFinderRelease, NULL);
 	MH_CreateHookApi(L"WS2_32", "bind", Hook_bind, reinterpret_cast<LPVOID*>(&pbind));
 	MH_CreateHookApi(L"user32", "ShowWindow", Hook_ShowWindow, reinterpret_cast<LPVOID*>(&pShowWindow));
+	MH_CreateHookApi(L"kernel32", "OutputDebugStringW", Hook_OutputDebugStringW, reinterpret_cast<LPVOID*>(&pOriginalOutputDebugStringW));
 
 	pMaxituneWndProc = (WindowProcedure_t)(hook::get_pattern("48 89 5C 24 08 48 89 6C 24 10 48 89 74 24 18 57 48 83 EC 30 8B EA BA EB FF FF FF 49 8B F9 49 8B F0 48 8B D9 FF 15 ? ? ? 00 48 85 C0 74 1D 4C", 0));
 	GenerateDongleData(isTerminal);
