@@ -175,25 +175,277 @@ static void WINAPI Hook_OutputDebugStringW(LPCWSTR str) {
 	}
 }
 
-extern "C" {
-	int32_t xRes;
-	int32_t yRes;
-	float ratio;
+// Resolution and ratio variables
+static int32_t xRes;
+static int32_t yRes;
+static float ratio;
 
-	typedef void (*RenderShape)();
-	RenderShape originalRenderShape = NULL;
-	typedef void (*RenderText)();
-	RenderText originalRenderText = NULL;
+typedef void (*RenderShape)();
+static RenderShape originalRenderShape = NULL;
+typedef void (*RenderText)();
+static RenderText originalRenderText = NULL;
 
-	void* whereRenderShape;
-	void implOfRenderShape();
-	void* whereRenderText;
-	void implOfRenderText();
+static void* whereRenderShape;
+static void* whereRenderText;
 
-	float realRenderShape(const char* lmdPath) {
-		if (strstr(lmdPath, "RIVALMARK")) return 1.0;
-		else return ratio;
-	}
+// Function pointers for dynamically generated hooks
+static void* implOfRenderShapePtr = nullptr;
+static void* implOfRenderTextPtr = nullptr;
+
+static float realRenderShape(const char* lmdPath) {
+	if (strstr(lmdPath, "RIVALMARK")) return 1.0f;
+	else return ratio;
+}
+
+// Helper function to write bytes to executable memory
+static void WriteBytes(unsigned char*& dest, const unsigned char* src, size_t count) {
+	memcpy(dest, src, count);
+	dest += count;
+}
+
+static void WriteByte(unsigned char*& dest, unsigned char byte) {
+	*dest++ = byte;
+}
+
+static void WriteUInt32(unsigned char*& dest, uint32_t value) {
+	memcpy(dest, &value, sizeof(value));
+	dest += sizeof(value);
+}
+
+static void WriteUInt64(unsigned char*& dest, uint64_t value) {
+	memcpy(dest, &value, sizeof(value));
+	dest += sizeof(value);
+}
+
+// Create implOfRenderShape dynamically
+// Original ASM:
+// implOfRenderShape:
+//     pushaq (push rax,rcx,rdx,rsi,r8-r15)
+//     sub rsp, 0x20
+//     call realRenderShape
+//     add rsp, 0x20
+//     popaq
+//     movss xmm11, xmm0
+//     movss dword [rbp+0x8], xmm11
+//     mov rax, [rel whereRenderShape]
+//     add rax, 15
+//     jmp rax
+static void* CreateImplOfRenderShape() {
+	// Allocate executable memory
+	unsigned char* code = (unsigned char*)VirtualAlloc(NULL, 256, MEM_COMMIT | MEM_RESERVE, PAGE_EXECUTE_READWRITE);
+	if (!code) return nullptr;
+	
+	unsigned char* p = code;
+	
+	// pushaq - save all registers
+	// push rax
+	WriteByte(p, 0x50);
+	// push rcx
+	WriteByte(p, 0x51);
+	// push rdx
+	WriteByte(p, 0x52);
+	// push rsi
+	WriteByte(p, 0x56);
+	// push r8
+	WriteByte(p, 0x41); WriteByte(p, 0x50);
+	// push r9
+	WriteByte(p, 0x41); WriteByte(p, 0x51);
+	// push r10
+	WriteByte(p, 0x41); WriteByte(p, 0x52);
+	// push r11
+	WriteByte(p, 0x41); WriteByte(p, 0x53);
+	// push r12
+	WriteByte(p, 0x41); WriteByte(p, 0x54);
+	// push r13
+	WriteByte(p, 0x41); WriteByte(p, 0x55);
+	// push r14
+	WriteByte(p, 0x41); WriteByte(p, 0x56);
+	// push r15
+	WriteByte(p, 0x41); WriteByte(p, 0x57);
+	
+	// sub rsp, 0x20 (shadow space for Windows x64 calling convention)
+	WriteByte(p, 0x48); WriteByte(p, 0x83); WriteByte(p, 0xEC); WriteByte(p, 0x20);
+	
+	// call realRenderShape (using absolute address via register)
+	// mov rax, <address of realRenderShape>
+	WriteByte(p, 0x48); WriteByte(p, 0xB8);
+	WriteUInt64(p, (uint64_t)&realRenderShape);
+	// call rax
+	WriteByte(p, 0xFF); WriteByte(p, 0xD0);
+	
+	// add rsp, 0x20
+	WriteByte(p, 0x48); WriteByte(p, 0x83); WriteByte(p, 0xC4); WriteByte(p, 0x20);
+	
+	// popaq - restore all registers
+	// pop r15
+	WriteByte(p, 0x41); WriteByte(p, 0x5F);
+	// pop r14
+	WriteByte(p, 0x41); WriteByte(p, 0x5E);
+	// pop r13
+	WriteByte(p, 0x41); WriteByte(p, 0x5D);
+	// pop r12
+	WriteByte(p, 0x41); WriteByte(p, 0x5C);
+	// pop r11
+	WriteByte(p, 0x41); WriteByte(p, 0x5B);
+	// pop r10
+	WriteByte(p, 0x41); WriteByte(p, 0x5A);
+	// pop r9
+	WriteByte(p, 0x41); WriteByte(p, 0x59);
+	// pop r8
+	WriteByte(p, 0x41); WriteByte(p, 0x58);
+	// pop rsi
+	WriteByte(p, 0x5E);
+	// pop rdx
+	WriteByte(p, 0x5A);
+	// pop rcx
+	WriteByte(p, 0x59);
+	// pop rax
+	WriteByte(p, 0x58);
+	
+	// movss xmm11, xmm0 (copy return value)
+	// F3 44 0F 10 D8 = movss xmm11, xmm0
+	WriteByte(p, 0xF3); WriteByte(p, 0x44); WriteByte(p, 0x0F); WriteByte(p, 0x10); WriteByte(p, 0xD8);
+	
+	// movss dword [rbp+0x8], xmm11
+	// F3 44 0F 11 5D 08 = movss [rbp+0x8], xmm11
+	WriteByte(p, 0xF3); WriteByte(p, 0x44); WriteByte(p, 0x0F); WriteByte(p, 0x11); WriteByte(p, 0x5D); WriteByte(p, 0x08);
+	
+	// mov rax, [whereRenderShape] (load the address)
+	// mov rax, <address of whereRenderShape>
+	WriteByte(p, 0x48); WriteByte(p, 0xB8);
+	WriteUInt64(p, (uint64_t)&whereRenderShape);
+	// mov rax, [rax]
+	WriteByte(p, 0x48); WriteByte(p, 0x8B); WriteByte(p, 0x00);
+	
+	// add rax, 15
+	WriteByte(p, 0x48); WriteByte(p, 0x83); WriteByte(p, 0xC0); WriteByte(p, 0x0F);
+	
+	// jmp rax
+	WriteByte(p, 0xFF); WriteByte(p, 0xE0);
+	
+	return code;
+}
+
+// Create implOfRenderText dynamically
+// Original ASM:
+// implOfRenderText:
+//     pushaq
+//     sub rsp, 0x20
+//     mov rcx, [rbx + 0x08]
+//     mov rcx, [rcx + 0x08]
+//     call realRenderShape
+//     add rsp, 0x20
+//     popaq
+//     movss xmm14, xmm0
+//     movss dword [rbp - 0x28], xmm14
+//     movss dword [rbp - 0x18], xmm12
+//     mov rax, [rel whereRenderText]
+//     add rax, 12
+//     jmp rax
+static void* CreateImplOfRenderText() {
+	// Allocate executable memory
+	unsigned char* code = (unsigned char*)VirtualAlloc(NULL, 256, MEM_COMMIT | MEM_RESERVE, PAGE_EXECUTE_READWRITE);
+	if (!code) return nullptr;
+	
+	unsigned char* p = code;
+	
+	// pushaq - save all registers
+	// push rax
+	WriteByte(p, 0x50);
+	// push rcx
+	WriteByte(p, 0x51);
+	// push rdx
+	WriteByte(p, 0x52);
+	// push rsi
+	WriteByte(p, 0x56);
+	// push r8
+	WriteByte(p, 0x41); WriteByte(p, 0x50);
+	// push r9
+	WriteByte(p, 0x41); WriteByte(p, 0x51);
+	// push r10
+	WriteByte(p, 0x41); WriteByte(p, 0x52);
+	// push r11
+	WriteByte(p, 0x41); WriteByte(p, 0x53);
+	// push r12
+	WriteByte(p, 0x41); WriteByte(p, 0x54);
+	// push r13
+	WriteByte(p, 0x41); WriteByte(p, 0x55);
+	// push r14
+	WriteByte(p, 0x41); WriteByte(p, 0x56);
+	// push r15
+	WriteByte(p, 0x41); WriteByte(p, 0x57);
+	
+	// sub rsp, 0x20 (shadow space)
+	WriteByte(p, 0x48); WriteByte(p, 0x83); WriteByte(p, 0xEC); WriteByte(p, 0x20);
+	
+	// mov rcx, [rbx + 0x08]
+	WriteByte(p, 0x48); WriteByte(p, 0x8B); WriteByte(p, 0x4B); WriteByte(p, 0x08);
+	
+	// mov rcx, [rcx + 0x08]
+	WriteByte(p, 0x48); WriteByte(p, 0x8B); WriteByte(p, 0x49); WriteByte(p, 0x08);
+	
+	// call realRenderShape (using absolute address via register)
+	// mov rax, <address of realRenderShape>
+	WriteByte(p, 0x48); WriteByte(p, 0xB8);
+	WriteUInt64(p, (uint64_t)&realRenderShape);
+	// call rax
+	WriteByte(p, 0xFF); WriteByte(p, 0xD0);
+	
+	// add rsp, 0x20
+	WriteByte(p, 0x48); WriteByte(p, 0x83); WriteByte(p, 0xC4); WriteByte(p, 0x20);
+	
+	// popaq - restore all registers
+	// pop r15
+	WriteByte(p, 0x41); WriteByte(p, 0x5F);
+	// pop r14
+	WriteByte(p, 0x41); WriteByte(p, 0x5E);
+	// pop r13
+	WriteByte(p, 0x41); WriteByte(p, 0x5D);
+	// pop r12
+	WriteByte(p, 0x41); WriteByte(p, 0x5C);
+	// pop r11
+	WriteByte(p, 0x41); WriteByte(p, 0x5B);
+	// pop r10
+	WriteByte(p, 0x41); WriteByte(p, 0x5A);
+	// pop r9
+	WriteByte(p, 0x41); WriteByte(p, 0x59);
+	// pop r8
+	WriteByte(p, 0x41); WriteByte(p, 0x58);
+	// pop rsi
+	WriteByte(p, 0x5E);
+	// pop rdx
+	WriteByte(p, 0x5A);
+	// pop rcx
+	WriteByte(p, 0x59);
+	// pop rax
+	WriteByte(p, 0x58);
+	
+	// movss xmm14, xmm0 (copy return value)
+	// F3 44 0F 10 F0 = movss xmm14, xmm0
+	WriteByte(p, 0xF3); WriteByte(p, 0x44); WriteByte(p, 0x0F); WriteByte(p, 0x10); WriteByte(p, 0xF0);
+	
+	// movss dword [rbp - 0x28], xmm14
+	// F3 44 0F 11 75 D8 = movss [rbp-0x28], xmm14
+	WriteByte(p, 0xF3); WriteByte(p, 0x44); WriteByte(p, 0x0F); WriteByte(p, 0x11); WriteByte(p, 0x75); WriteByte(p, 0xD8);
+	
+	// movss dword [rbp - 0x18], xmm12
+	// F3 44 0F 11 65 E8 = movss [rbp-0x18], xmm12
+	WriteByte(p, 0xF3); WriteByte(p, 0x44); WriteByte(p, 0x0F); WriteByte(p, 0x11); WriteByte(p, 0x65); WriteByte(p, 0xE8);
+	
+	// mov rax, [whereRenderText] (load the address)
+	// mov rax, <address of whereRenderText>
+	WriteByte(p, 0x48); WriteByte(p, 0xB8);
+	WriteUInt64(p, (uint64_t)&whereRenderText);
+	// mov rax, [rax]
+	WriteByte(p, 0x48); WriteByte(p, 0x8B); WriteByte(p, 0x00);
+	
+	// add rax, 12
+	WriteByte(p, 0x48); WriteByte(p, 0x83); WriteByte(p, 0xC0); WriteByte(p, 0x0C);
+	
+	// jmp rax
+	WriteByte(p, 0xFF); WriteByte(p, 0xE0);
+	
+	return code;
 }
 
 typedef BOOL(WINAPI* ShowWindow_t)(HWND, int);
@@ -536,8 +788,13 @@ static InitFunction Wmmt6RRFunc([]() {
 
 	whereRenderShape = (void*)(imageBase + 0xA12CEE);
 	whereRenderText = (void*)(imageBase + 0xA15FDB);
-	MH_CreateHook((void*)whereRenderShape, (void*)implOfRenderShape, (void**)&originalRenderShape);
-	MH_CreateHook((void*)whereRenderText, (void*)implOfRenderText, (void**)&originalRenderText);
+	
+	// Create dynamic hook functions (replaces external ASM)
+	implOfRenderShapePtr = CreateImplOfRenderShape();
+	implOfRenderTextPtr = CreateImplOfRenderText();
+	
+	MH_CreateHook((void*)whereRenderShape, implOfRenderShapePtr, (void**)&originalRenderShape);
+	MH_CreateHook((void*)whereRenderText, implOfRenderTextPtr, (void**)&originalRenderText);
 
 	injector::MakeNOP((imageBase + 0xB34A8), 4);
 	injector::MakeNOP((imageBase + 0xB34CE), 4);
