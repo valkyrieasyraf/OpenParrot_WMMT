@@ -1,4 +1,4 @@
-#include <StdInc.h>
+ï»¿#include <StdInc.h>
 #pragma optimize("", off)
 #include <iphlpapi.h>
 #include <winsock2.h>
@@ -48,7 +48,7 @@ static std::pair<std::string, std::string> FormatSoftwareRevisionDual(int softwa
 	return { firstDigit, formatted };
 }
 
-// ¶ÁÈ¡ÎÄ¼şÄÚÈİµ½ string
+// è¯»å–æ–‡ä»¶å†…å®¹åˆ° string
 static std::string ReadFileToString(const std::string& path)
 {
 	FILE* f = fopen(path.c_str(), "rb");
@@ -66,7 +66,7 @@ static std::string ReadFileToString(const std::string& path)
 	return content;
 }
 
-// ¸ù¾İ gameVer »ñÈ¡ softwareRevision
+// æ ¹æ® gameVer è·å– softwareRevision
 static int GetSoftwareRevision(const std::string& exePath, const std::string& gameVer)
 {
 	size_t lastSlash = exePath.find_last_of("\\/");
@@ -89,7 +89,7 @@ static int GetSoftwareRevision(const std::string& exePath, const std::string& ga
 		if (item.contains("presetGame") && item["presetGame"].is_string()) {
 			if (item["presetGame"] == gameVer) {
 				if (item.contains("softwareRevision")) {
-					// Ö§³ÖÊı×Ö»ò×Ö·û´®
+					// æ”¯æŒæ•°å­—æˆ–å­—ç¬¦ä¸²
 					if (item["softwareRevision"].is_number_integer()) {
 						return item["softwareRevision"];
 					}
@@ -1002,7 +1002,7 @@ static void dllreg() {
 	HRESULT hr = DllRegisterServer();
 	if (SUCCEEDED(hr)) {
 #ifdef DEBUG
-		¨©nfo(true, "iauthdll.dll registered successfully!");
+		Ä«nfo(true, "iauthdll.dll registered successfully!");
 #endif
 	}
 	else {
