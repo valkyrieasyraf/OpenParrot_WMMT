@@ -34,4 +34,4 @@ No technical support is provided.
  - [Emi (PockyWitch)](https://twitter.com/ChocomintPuppy) - code, protocol analysis, info etc
  - [derole](https://derole.co.uk) - protocol help, info
  - [The Wangan Midnight Emulation Discord](https://discord.gg/r3nbd4x)
- - [FestoROG-XS(Noiirsha)](https://github.com/FestoROG-XS) - The original code for the 6RR module was written by him:: [AkariaHroptrLoader](https://github.com/FestoROG-XS/AkariaHroptrLoader)
+ - [FestoROG-XS(Noiirsha)](https://github.com/FestoROG-XS) - The original code for the 6RR module was written by him: [AkariaHroptrLoader](https://github.com/FestoROG-XS/AkariaHroptrLoader)
