@@ -458,6 +458,134 @@ static void prepareCerts() {
 	return;
 }
 
+static void ApplyResolutionPatch(uintptr_t imageBase, short Xres, short Yres) {
+	// Jump patch 1: 10559735 0xA12CF7
+	{
+		uint8_t buffer[6] = { 0xE9, 0x94, 0x74, 0x66, 0x00, 0x90 };
+		auto location = imageBase + 0xA12CF7;
+		for (int i = 0; i < 6; ++i) {
+			injector::WriteMemory<uint8_t>(location + i, buffer[i], true);
+		}
+	}
+
+	// Jump patch 2: 10572763 0xA15FDB
+	{
+		uint8_t buffer[6] = { 0xE9, 0xC8, 0x41, 0x66, 0x00, 0x90 };
+		auto location = imageBase + 0xA15FDB;
+		for (int i = 0; i < 6; ++i) {
+			injector::WriteMemory<uint8_t>(location + i, buffer[i], true);
+		}
+	}
+
+	// UI scale patch 1: 17274256 0x107A190
+	{
+		uint8_t buffer[24] = {
+		    0xC7, 0x45, 0x08, 0x55, 0x55, 0x35, 0x3F,  // mov dword [rbp+0x8], 0x3F355555
+    		0xF3, 0x44, 0x0F, 0x59, 0x5D, 0x08,        // mulss xmm11, [rbp+0x8]
+    		0xF3, 0x44, 0x0F, 0x11, 0x5D, 0x08,        // movss [rbp+0x8], xmm11
+    		0xE9, 0x55, 0x8B, 0x99, 0xFF               // jmp back
+		};
+		auto location = imageBase + 0x107A190;
+		for (int i = 0; i < 24; ++i) {
+			injector::WriteMemory<uint8_t>(location + i, buffer[i], true);
+		}
+	}
+
+	// UI scale patch 2: 17274280 0x107A1A8
+	{
+		uint8_t buffer[24] = {
+		    0xC7, 0x45, 0xD8, 0x55, 0x55, 0x35, 0x3F,  // mov dword [rbp-0x28], 0x3F355555
+    		0xF3, 0x44, 0x0F, 0x59, 0x75, 0xD8,        // mulss xmm14, [rbp-0x28]
+    		0xF3, 0x44, 0x0F, 0x11, 0x75, 0xD8,        // movss [rbp-0x28], xmm14
+    		0xE9, 0x21, 0xBE, 0x99, 0xFF               // jmp back
+		};
+		auto location = imageBase + 0x107A1A8;
+		for (int i = 0; i < 24; ++i) {
+			injector::WriteMemory<uint8_t>(location + i, buffer[i], true);
+		}
+	}
+
+	// Xres patches
+	{
+		uint8_t bytes[2];
+		bytes[0] = static_cast<uint8_t>(Xres & 0xFF);
+		bytes[1] = static_cast<uint8_t>((Xres >> 8) & 0xFF);
+
+		auto location1 = imageBase + 0x21781E; // 2190366 0x21781E
+		injector::WriteMemory<uint8_t>(location1, bytes[0], true);
+		injector::WriteMemory<uint8_t>(location1 + 1, bytes[1], true);
+
+		auto location2 = imageBase + 0xC6E941; // 13032769 0xC6E941
+		injector::WriteMemory<uint8_t>(location2, bytes[0], true);
+		injector::WriteMemory<uint8_t>(location2 + 1, bytes[1], true);
+	}
+
+	// Yres patches
+	{
+		uint8_t bytes[2];
+		bytes[0] = static_cast<uint8_t>(Yres & 0xFF);
+		bytes[1] = static_cast<uint8_t>((Yres >> 8) & 0xFF);
+
+		auto location1 = imageBase + 0x217824; // 2190372 0x217824
+		injector::WriteMemory<uint8_t>(location1, bytes[0], true);
+		injector::WriteMemory<uint8_t>(location1 + 1, bytes[1], true);
+
+		auto location2 = imageBase + 0xC6E948; // 13032776 0xC6E948
+		injector::WriteMemory<uint8_t>(location2, bytes[0], true);
+		injector::WriteMemory<uint8_t>(location2 + 1, bytes[1], true);
+	}
+
+	// 16:9 ratio patches
+	{
+		float value = 765.0f / static_cast<float>(Yres);
+		uint8_t ratioBytes[4];
+		std::memcpy(ratioBytes, &value, sizeof(value));
+
+		uint8_t buffer5[4] = { 0x39, 0x8E, 0xE3, 0x3F };
+		auto location1 = imageBase + 0x175D7E; // 1528190 0x175D7E
+		for (int i = 0; i < 4; ++i) {
+			injector::WriteMemory<uint8_t>(location1 + i, buffer5[i], true);
+		}
+
+		auto location2 = imageBase + 0x107A193; // 17274259 0x107A193
+		for (int i = 0; i < 4; ++i) {
+			injector::WriteMemory<uint8_t>(location2 + i, ratioBytes[i], true);
+		}
+
+		auto location3 = imageBase + 0x107A1AB; // 17274283 0x107A1AB
+		for (int i = 0; i < 4; ++i) {
+			injector::WriteMemory<uint8_t>(location3 + i, ratioBytes[i], true);
+		}
+	}
+}
+
+static void ParseResolutionConfig(const std::string& res, short& Xres, short& Yres) {
+	if (res.compare("1280x720") == 0) {
+		Xres = 1280;
+		Yres = 720;
+	}
+	else if (res.compare("1360x768") == 0) {
+		Xres = 1360;
+		Yres = 768;
+	}
+	else if (res.compare("1920x1080") == 0) {
+		Xres = 1920;
+		Yres = 1080;
+	}
+	else if (res.compare("2560x1440") == 0) {
+		Xres = 2560;
+		Yres = 1440;
+	}
+	else if (res.compare("3840x2160") == 0) {
+		Xres = 3840;
+		Yres = 2160;
+	}
+	else {
+		Xres = 1360;
+		Yres = 768;
+	}
+}
+
 static InitFunction Wmmt6RRFunc([]() {
 	prepareCerts();
 
@@ -491,6 +619,9 @@ static InitFunction Wmmt6RRFunc([]() {
 		ipaddr = networkip.c_str();
 	}
 
+	// Resolution patch
+	short Xres = 1360;
+	short Yres = 768;
 	std::string res = config["Resolution"]["RES"];
 	ParseResolutionConfig(res, Xres, Yres);
 	ApplyResolutionPatch(imageBase, Xres, Yres);
