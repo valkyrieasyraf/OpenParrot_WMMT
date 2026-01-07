@@ -80,6 +80,22 @@ static int ReturnTrue() {
 	return 1;
 }
 
+// Hook to skip update check by forcing status to 2 (complete)
+static __int64 (*orig_sub_140732030)(__int64 a1, __int64 a2, unsigned int a3) = nullptr;
+
+static __int64 __fastcall Hook_InfoSystemCheck(__int64 a1, __int64 a2, unsigned int a3) {
+	__int64 result = orig_sub_140732030(a1, a2, a3);
+	// a3 == 16 is the update check
+	if (a3 == 16) {
+		int status = *(int*)(a2 + 8);
+		if (status == 1) {
+			// Force status to 2 (complete) to skip update check
+			*(int*)(a2 + 8) = 2;
+		}
+	}
+	return result;
+}
+
 static BYTE GenerateChecksum(unsigned char* myArray, int index, int length) {
 	BYTE crc = 0;
 	for (int i = 0; i < length; i++) {
@@ -721,7 +737,7 @@ static InitFunction Wmmt6RRFunc([]() {
 	FreeConsole();
 	AllocConsole();
 
-	SetConsoleTitle(L"W6W Console | Res Patch thanks for BroGamer & WAL | Modified by Kiana");
+	SetConsoleTitle(L"W6W Console");
 
 	FILE* pNewStdout = nullptr;
 	FILE* pNewStderr = nullptr;
@@ -815,7 +831,13 @@ static InitFunction Wmmt6RRFunc([]() {
 	MH_CreateHookApi(L"nbamUsbFinder.dll", "nbamUsbFinderRelease", nbamUsbFinderRelease, NULL);
 	MH_CreateHookApi(L"WS2_32", "bind", Hook_bind, reinterpret_cast<LPVOID*>(&pbind));
 	MH_CreateHookApi(L"user32", "ShowWindow", Hook_ShowWindow, reinterpret_cast<LPVOID*>(&pShowWindow));
+
+#ifdef _DEBUG
 	MH_CreateHookApi(L"kernel32", "OutputDebugStringW", Hook_OutputDebugStringW, reinterpret_cast<LPVOID*>(&pOriginalOutputDebugStringW));
+#endif
+
+	// Hook InfoSystem::Check to skip update check (a3=16)
+	MH_CreateHook((LPVOID)(imageBase + 0x732030), Hook_InfoSystemCheck, reinterpret_cast<LPVOID*>(&orig_sub_140732030));
 
 	pMaxituneWndProc = (WindowProcedure_t)(hook::get_pattern("48 89 5C 24 08 48 89 6C 24 10 48 89 74 24 18 57 48 83 EC 30 8B EA BA EB FF FF FF 49 8B F9 49 8B F0 48 8B D9 FF 15 ? ? ? 00 48 85 C0 74 1D 4C", 0));
 	GenerateDongleData(isTerminal);
