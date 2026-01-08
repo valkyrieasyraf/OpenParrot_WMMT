@@ -753,6 +753,11 @@ static InitFunction Wmmt5Func([]() {
 	//Fix crash when saving story mode and Time attack
 	injector::MakeNOP(imageBasedxplus + 0xE8DE7, 5);
 
+	// Fix null pointer crash in LevelupAndGetHonorSequenceImpl
+	// At 0x7127DE: mov rax,[rdi+70h] followed by mov ecx,[rax+rcx*4]
+	// Crashes when [rdi+70h] is NULL - NOP out the problematic access
+	injector::MakeNOP(imageBasedxplus + 0x7127DE, 7);
+
 	MH_EnableHook(MH_ALL_HOOKS);
 	}, GameID::WMMT5DXPlus);
 #endif
