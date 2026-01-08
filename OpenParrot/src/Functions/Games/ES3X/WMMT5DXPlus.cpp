@@ -147,11 +147,7 @@ static BOOL Hook_ShowWindow(HWND hwnd, int nCmdShow) {
 	return pShowWindow(hwnd, nCmdShow);
 }
 
-typedef void (WINAPI* OutputDebugStringA_t)(LPCSTR);
-static void Hook_OutputDebugStringA(LPCSTR str) {
-	printf("%s", str);
-}
-
+#ifdef _DEBUG
 typedef void (WINAPI* OutputDebugStringW_t)(LPCWSTR);
 static OutputDebugStringW_t pOriginalOutputDebugStringW = nullptr;
 // Hook OutputDebugStringW to capture game debug output
@@ -165,6 +161,7 @@ static void WINAPI Hook_OutputDebugStringW(LPCWSTR str) {
 		pOriginalOutputDebugStringW(str);
 	}
 }
+#endif
 
 static DWORD WINAPI SpamMulticast(LPVOID) {
 	WSADATA wsaData;
@@ -694,8 +691,10 @@ static InitFunction Wmmt5Func([]() {
 	MH_CreateHookApi(L"hasp_windows_x64_106482.dll", "hasp_logout", dxpHook_hasp_logout, NULL);
 	MH_CreateHookApi(L"hasp_windows_x64_106482.dll", "hasp_login", dxpHook_hasp_login, NULL);
 	MH_CreateHookApi(L"WS2_32", "bind", Hook_bind_w5p, reinterpret_cast<LPVOID*>(&pbindw5p));
-	MH_CreateHookApi(L"kernel32", "OutputDebugStringA", Hook_OutputDebugStringA, NULL);
+	
+#ifdef _DEBUG
 	MH_CreateHookApi(L"kernel32", "OutputDebugStringW", Hook_OutputDebugStringW, reinterpret_cast<LPVOID*>(&pOriginalOutputDebugStringW));
+#endif
 
 	// Give me the HWND please maxitune
 	MH_CreateHookApi(L"user32", "ShowWindow", Hook_ShowWindow, reinterpret_cast<LPVOID*>(&pShowWindow));
